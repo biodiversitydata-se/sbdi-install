@@ -3,14 +3,24 @@
     path: /srv/prometheus
     mode: 0755
     state: directory
-  become: true
+
+- name: Create Folder /srv/grafana if not exist
+  file:
+    path: /srv/grafana
+    mode: 0755
+    state: directory
 
 - name: Create prometheus configuration file
   copy:
     dest: /srv/prometheus/prometheus.yml
     src: prometheus/prometheus.yml
     mode: 0644
-  become: true
+
+- name: Create grafana configuration files
+  copy:
+    dest: /srv/
+    src: grafana
+    mode: 0644
 
 - name: Create Prometheus container
   docker_container:
@@ -27,3 +37,14 @@
       --web.console.templates=/etc/prometheus/consoles
       --web.enable-lifecycle
     published_ports: "9090:9090"
+
+- name: Create Grafana container
+  docker_container:
+    name: grafana
+    restart_policy: always
+    image: grafana/grafana:{{ grafana_version }}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - /srv/grafana/provisioning:/etc/grafana/provisioning
+      - /srv/grafana/dashboards:/var/lib/grafana/dashboards
+    published_ports: "3000:3000"
