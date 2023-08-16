@@ -1,0 +1,7 @@
+[monitoring_observer]
+live-ext-1 ansible_user=ubuntu
+
+[monitoring_target]
+live-manager-1
+live-ext-1 ansible_user=ubuntu
+live-pybossa ansible_user=ubuntu
