@@ -21,6 +21,8 @@
     volumes:
       - /srv/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_main_data:/prometheus
+    networks:
+      - name: sbdinet
     command: >
       --config.file=/etc/prometheus/prometheus.yml
       --storage.tsdb.path=/prometheus
@@ -53,4 +55,6 @@
       - grafana-data:/var/lib/grafana
       - /srv/grafana/provisioning:/etc/grafana/provisioning
       - /srv/grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - name: sbdinet
     published_ports: "3000:3000"
