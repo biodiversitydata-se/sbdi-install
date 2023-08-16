@@ -1,17 +1,15 @@
 - name: Install Observability stack (targets)
-  hosts: target
+  hosts: monitoring_target
   become: true
   tags:
-    - monitoring
     - target
   roles:
-    - ../roles/target
+    - ../roles/monitoring/target
 
 - name: Install Observability stack (observer)
-  hosts: observer
+  hosts: monitoring_observer
   become: true
   tags:
-    - monitoring
     - observer
   roles:
-    - ../roles/observer
+    - ../roles/monitoring/observer
