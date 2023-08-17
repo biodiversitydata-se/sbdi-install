@@ -23,6 +23,10 @@
       - prometheus_main_data:/prometheus
     networks:
       - name: sbdinet
+    etc_hosts:
+      'live-manager-1': '192.121.208.20'
+      'live-ext-1': '192.121.209.107'
+      'live-pybossa': '192.121.209.239'
     command: >
       --config.file=/etc/prometheus/prometheus.yml
       --storage.tsdb.path=/prometheus
