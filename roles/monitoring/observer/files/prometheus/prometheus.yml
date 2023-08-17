@@ -7,6 +7,15 @@ scrape_configs:
     static_configs:
     - targets: 
         - "live-manager-1:9100"
+        - "live-solr-1:9100"
+        - "live-solr-2:9100"
+        - "live-solr-3:9100"
+        - "live-solr-4:9100"
+        - "live-cassandra-1:9100"
+        - "live-cassandra-2:9100"
+        - "live-cassandra-3:9100"
+        - "live-cassandra-4:9100"
+        - "live-molecular-1:9100"
         - "live-ext-1:9100"
         - "live-pybossa:9100"
 
@@ -14,5 +23,14 @@ scrape_configs:
     static_configs:
     - targets:
         - "live-manager-1:9101"
+        - "live-solr-1:9101"
+        - "live-solr-2:9101"
+        - "live-solr-3:9101"
+        - "live-solr-4:9101"
+        - "live-cassandra-1:9101"
+        - "live-cassandra-2:9101"
+        - "live-cassandra-3:9101"
+        - "live-cassandra-4:9101"
         - "live-ext-1:9101"
+        - "live-molecular-1:9101"
         - "live-pybossa:9101"

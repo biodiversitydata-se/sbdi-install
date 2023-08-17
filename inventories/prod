@@ -3,5 +3,14 @@ live-ext-1 ansible_user=ubuntu
 
 [monitoring_target]
 live-manager-1
+live-solr-1
+live-solr-2
+live-solr-3
+live-solr-4
+live-cassandra-1
+live-cassandra-2
+live-cassandra-3
+live-cassandra-4
 live-ext-1 ansible_user=ubuntu
+live-molecular-1 ansible_user=ubuntu
 live-pybossa ansible_user=ubuntu

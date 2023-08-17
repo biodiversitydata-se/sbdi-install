@@ -25,6 +25,15 @@
       - name: sbdinet
     etc_hosts:
       'live-manager-1': '192.121.208.20'
+      'live-solr-1': '10.65.0.154'
+      'live-solr-2': '10.65.3.74'
+      'live-solr-3': '10.65.2.132'
+      'live-solr-4': '10.65.2.185'
+      'live-cassandra-1': '10.65.3.77'
+      'live-cassandra-2': '10.65.2.143'
+      'live-cassandra-3': '10.65.0.229'
+      'live-cassandra-4': '10.65.2.217'
+      'live-molecular-1': '192.121.208.234'
       'live-ext-1': '192.121.209.107'
       'live-pybossa': '192.121.209.239'
     command: >
