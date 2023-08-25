@@ -23,7 +23,7 @@
   tags:
     - app_config
     
-- name: Install docker-compose.yml using version
+- name: Install docker-compose.yml
   become: true
   template:
     src: docker-compose.yml
@@ -32,7 +32,7 @@
     group: docker
     mode: 0664
   tags:
-    - docker_compose
+    - compose_file
 
 - name: Deploy stack 
   command: docker stack deploy -c /docker/apps/dashboard/docker-compose.yml dashboard
