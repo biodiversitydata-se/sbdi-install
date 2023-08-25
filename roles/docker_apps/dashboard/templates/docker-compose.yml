@@ -11,7 +11,7 @@ configs:
 services:
 
   dashboard:
-    image: ghcr.io/biodiversitydata-se/dashboard:{{ app_version }}
+    image: ghcr.io/biodiversitydata-se/dashboard:{{ app_version | default('latest')}}
     environment:
       JAVA_OPTS: -Xmx1g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
     configs:

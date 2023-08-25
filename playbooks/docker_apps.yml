@@ -1,9 +1,5 @@
 - name: Deploy Dashboard
   hosts: swarm_managers
-  vars_prompt:
-    - name: app_version
-      prompt: Version
-      private: false
   roles:
     - ../roles/docker_apps/dashboard
   tags:

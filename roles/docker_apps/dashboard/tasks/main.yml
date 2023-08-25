@@ -23,7 +23,7 @@
   tags:
     - app_config
     
-- name: Install docker-compose.yml using version {{ app_version }}
+- name: Install docker-compose.yml using version
   become: true
   template:
     src: docker-compose.yml
