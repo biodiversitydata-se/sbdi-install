@@ -1,0 +1,21 @@
+version: '3.7'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_dashboard:
+    file: ./config/dashboard-config.properties
+
+services:
+
+  dashboard:
+    image: ghcr.io/biodiversitydata-se/dashboard:v2.0.1
+    environment:
+      JAVA_OPTS: -Xmx1g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    configs:
+      - source: config_dashboard
+        target: /data/dashboard/config/dashboard-config.properties
+    networks:
+      - basnet
