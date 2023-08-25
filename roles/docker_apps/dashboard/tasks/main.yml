@@ -32,7 +32,7 @@
   tags:
     - app_config
     
-- name: Install docker-compose.yml
+- name: Install docker-compose.yml using version {{ app_version }}
   template:
     src: docker-compose.yml
     dest: /docker/apps/dashboard/docker-compose.yml
