@@ -1,7 +1,31 @@
-- name: Deploy Dashboard
+- name: Deploy docker app
   hosts: swarm_managers
-  roles:
-    - ../roles/docker_apps/dashboard
-  tags:
-    - dashboard
-  
+  vars_prompt:
+  - name: app_name
+    prompt: App name
+    private: false
+  - name: app_version
+    prompt: App version
+    private: false
+
+  tasks:
+
+    - name: Ensure main docker apps directory
+      become: true
+      file:
+        path: /{{item}}
+        owner: root
+        group: root
+        mode: 0755
+        state: directory
+      with_items:
+        - docker
+        - docker/apps
+      tags:
+        - app_directory
+
+    - name: Deploy {{ app_name }} {{ app_version }}
+      include_role:
+        name: "../roles/docker_apps/{{ app_name }}"
+      tags:
+        - deploy

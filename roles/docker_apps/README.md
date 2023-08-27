@@ -1,18 +1,16 @@
 # Docker apps
 
-So far only deploys the Dashboard app.
-
-Deploy the latest docker image:
+Deploy a single app (you will be promted for app name and version):
 ```
-ansible-playbook -i inventories/prod playbooks/docker_apps.yml -t deploy
+ansible-playbook -i inventories/prod playbooks/docker_apps.yml --ask-become-pass -t deploy
 ```
 
-Deploy a specfic docker image:
+Deploy a single app with name and version as parameters:
 ```
-ansible-playbook -i inventories/prod playbooks/docker_apps.yml -t compose_file,deploy --ask-become-pass --extra-vars "app_version=2.0.2"
+ansible-playbook -i inventories/prod playbooks/docker_apps.yml --ask-become-pass -t deploy --extra-vars "app_name=dashboard app_version=2.0.2"
 ```
 
-Create app directories, deploy config files and the latest Docker image:
+Create app directories, deploy config files and deploy the the docker image:
 ```
 ansible-playbook -i inventories/prod playbooks/docker_apps.yml --ask-become-pass
 ```

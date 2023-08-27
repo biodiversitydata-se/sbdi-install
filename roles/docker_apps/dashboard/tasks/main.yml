@@ -1,14 +1,14 @@
-- name: Ensure configuration and script directories
+- name: Ensure configuration directories
   become: true
   file:
-    path: /docker/{{item}}
+    path: /docker/apps/{{item}}
     owner: root
     group: docker
     mode: 0775
     state: directory
   with_items:
-    - apps/dashboard
-    - apps/dashboard/config
+    - dashboard
+    - dashboard/config
   tags:
     - app_directory
 
@@ -23,7 +23,7 @@
   tags:
     - app_config
     
-- name: Install docker-compose.yml
+- name: Install docker-compose file
   become: true
   template:
     src: docker-compose.yml
@@ -32,9 +32,9 @@
     group: docker
     mode: 0664
   tags:
-    - compose_file
+    - deploy
 
-- name: Deploy stack 
+- name: Deploy stack {{ app_name }} {{ app_version }}
   command: docker stack deploy -c /docker/apps/dashboard/docker-compose.yml dashboard
   tags:
     - deploy
