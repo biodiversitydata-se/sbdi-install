@@ -1,0 +1,2 @@
+[swarm_managers]
+127.0.0.1 ansible_connection=local
