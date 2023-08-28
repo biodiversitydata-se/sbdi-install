@@ -1,4 +1,4 @@
-- name: Deploy docker app
+- name: Deploy app
   hosts: swarm_managers
   vars_prompt:
   - name: app_name
@@ -10,7 +10,7 @@
 
   tasks:
 
-    - name: Ensure main docker apps directory
+    - name: Ensure main apps directory
       become: true
       file:
         path: /{{ item }}
@@ -26,6 +26,6 @@
 
     - name: Deploy {{ app_name }} {{ app_version }}
       include_role:
-        name: "../roles/docker_apps/{{ app_name }}"
+        name: "../roles/apps/{{ app_name }}"
       tags:
         - deploy
