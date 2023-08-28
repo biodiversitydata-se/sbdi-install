@@ -13,14 +13,14 @@
     - name: Ensure main docker apps directory
       become: true
       file:
-        path: /{{item}}
+        path: /{{ item }}
         owner: root
         group: root
         mode: 0755
         state: directory
       with_items:
-        - docker
-        - docker/apps
+        - data
+        - data/apps
       tags:
         - app_directory
 

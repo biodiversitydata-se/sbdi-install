@@ -1,7 +1,7 @@
 - name: Ensure configuration directories
   become: true
   file:
-    path: /docker/apps/{{item}}
+    path: /data/apps/{{item}}
     owner: root
     group: docker
     mode: 0775
@@ -16,7 +16,7 @@
   become: true
   copy:
     src: config/dashboard-config.properties
-    dest: /docker/apps/dashboard/config/dashboard-config.properties
+    dest: /data/apps/dashboard/config/dashboard-config.properties
     owner: root
     group: docker
     mode: 0664
@@ -27,7 +27,7 @@
   become: true
   template:
     src: docker-compose.yml
-    dest: /docker/apps/dashboard/docker-compose.yml
+    dest: /data/apps/dashboard/docker-compose.yml
     owner: root
     group: docker
     mode: 0664
@@ -35,6 +35,6 @@
     - deploy
 
 - name: Deploy stack {{ app_name }} {{ app_version }}
-  command: docker stack deploy -c /docker/apps/dashboard/docker-compose.yml dashboard
+  command: docker stack deploy -c /data/apps/dashboard/docker-compose.yml dashboard
   tags:
     - deploy
