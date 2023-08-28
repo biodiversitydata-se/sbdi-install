@@ -5,17 +5,17 @@ networks:
     external: true
 
 configs:
-  config_dashboard:
-    file: ./config/dashboard-config.properties
+  config_{{ app_name }}:
+    file: ./config/{{ app_name }}-config.properties
 
 services:
 
-  dashboard:
-    image: ghcr.io/biodiversitydata-se/dashboard:{{ app_version }}
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
     environment:
       JAVA_OPTS: -Xmx1g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
     configs:
-      - source: config_dashboard
-        target: /data/dashboard/config/dashboard-config.properties
+      - source: config_{{ app_name }}
+        target: /data/{{ app_name }}/config/{{ app_name }}-config.properties
     networks:
       - basnet

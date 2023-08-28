@@ -7,16 +7,16 @@
     mode: 0775
     state: directory
   with_items:
-    - dashboard
-    - dashboard/config
+    - "{{ app_name }}"
+    - "{{ app_name }}/config"
   tags:
     - app_directory
 
 - name: Install configuration file
   become: true
   copy:
-    src: config/dashboard-config.properties
-    dest: /data/apps/dashboard/config/dashboard-config.properties
+    src: config/{{ app_name }}-config.properties
+    dest: /data/apps/{{ app_name }}/config/{{ app_name }}-config.properties
     owner: root
     group: docker
     mode: 0664
@@ -27,7 +27,7 @@
   become: true
   template:
     src: docker-compose.yml
-    dest: /data/apps/dashboard/docker-compose.yml
+    dest: /data/apps/{{ app_name }}/docker-compose.yml
     owner: root
     group: docker
     mode: 0664
@@ -35,6 +35,6 @@
     - deploy
 
 - name: Deploy stack {{ app_name }} {{ app_version }}
-  command: docker stack deploy -c /data/apps/dashboard/docker-compose.yml dashboard
+  command: docker stack deploy -c /data/apps/{{ app_name }}/docker-compose.yml {{ app_name }}
   tags:
     - deploy
