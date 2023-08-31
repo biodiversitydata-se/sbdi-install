@@ -9,6 +9,7 @@
   with_items:
     - "{{ app_name }}"
     - "{{ app_name }}/config"
+    - "{{ app_name }}/env"
   tags:
     - app_directory
 
@@ -22,7 +23,18 @@
     mode: 0664
   tags:
     - app_config
-    
+
+- name: Install env template
+  become: true
+  copy:
+    src: env/env{{ app_name }}.template
+    dest: /data/apps/{{ app_name }}/env/env{{ app_name }}.template
+    owner: root
+    group: docker
+    mode: 0644
+  tags:
+    - env_template
+
 - name: Install docker-compose file
   become: true
   template:
