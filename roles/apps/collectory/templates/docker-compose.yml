@@ -1,0 +1,40 @@
+version: '3.7'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_{{ app_name }}:
+    file: ./config/{{ app_name }}-config.properties
+
+services:
+
+  mysqldb-{{ app_name }}:
+    image: mysql:8.0
+    #env_file: "/data/{{ app_name }}/etc/collectory/env/.envcollectory"
+    #volumes:
+    #  - db_data_collectory:/var/lib/mysql
+    networks:
+      - basnet
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    depends_on:
+      - mysqldb-{{ app_name }}
+    environment:
+      JAVA_OPTS: -Xmx2g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+#    volumes:
+#      - type: bind
+#        source: "${DOCKER_CTX:-/docker}/etc/collectory/wait-for-it.sh"
+#        target: /wait-for-it.sh
+#      - type: volume
+#        source: data_collectory
+#        target: /data/ala-collectory
+#    env_file: "${DOCKER_CTX:-/docker}/etc/collectory/env/.envcollectory"
+    configs:
+      - source: config_{{ app_name }}
+        target: /data/{{ app_name }}/config/{{ app_name }}-config.properties
+#    command: /bin/ash -c "envsubst < /tmp/ala-collectory-config.properties > /data/ala-collectory/config/ala-collectory-config.properties && /bin/bash /wait-for-it.sh mysqldb:3306 --timeout=60 --strict && catalina.sh run"
+    networks:
+      - basnet
