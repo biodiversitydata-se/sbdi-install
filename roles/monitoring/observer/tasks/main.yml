@@ -71,3 +71,15 @@
     networks:
       - name: sbdinet
     published_ports: "3000:3000"
+
+# 
+# Blackbox
+#
+- name: Create Blackbox container
+  docker_container:
+    name: blackbox
+    restart_policy: always
+    image: prom/blackbox-exporter:{{ blackbox_version }}
+    networks:
+      - name: sbdinet
+    published_ports: "9115:9115"

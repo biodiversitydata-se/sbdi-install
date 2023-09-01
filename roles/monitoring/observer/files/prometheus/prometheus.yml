@@ -34,3 +34,33 @@ scrape_configs:
         - "live-ext-1:9101"
         - "live-molecular-1:9101"
         - "live-pybossa:9101"
+
+  - job_name: 'blackbox-http'
+    scrape_interval: 60s
+    scrape_timeout: 10s
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: [https://biodiversitydata.se]
+        labels:
+          name: biodiversitydata
+      - targets: [https://collections.biodiversitydata.se/ws/institution/count]
+        labels:
+          name: collections
+      - targets: [https://dashboard.biodiversitydata.se]
+        labels:
+          name: dashboard
+      - targets: [https://logger.biodiversitydata.se/service/totalsByType]
+        labels:
+          name: logger
+      - targets: ['https://records.biodiversitydata.se/ws/occurrences/search?fq=&pageSize=1&taxa=groda']
+        labels:
+          name: records
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
