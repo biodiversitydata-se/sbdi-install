@@ -17,6 +17,7 @@ Service | Exporter | Path
 ---|---|---
 Linux | [node-exporter](https://github.com/prometheus/node_exporter) | :9100/metrics
 Docker | [cAdvisor](https://github.com/google/cadvisor) | :9101/metrics
+Health checks | [blackbox_exporter](https://github.com/prometheus/blackbox_exporter) | :9115/metrics (runs on the observer and not on the targets)
 
 ## Usage
 

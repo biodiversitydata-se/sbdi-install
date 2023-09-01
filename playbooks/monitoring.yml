@@ -64,3 +64,11 @@
         name: grafana
         state: started
         restart: true
+
+    - name: Restart Blackbox container
+      tags: 
+        - restart_blackbox
+      docker_container:
+        name: blackbox
+        state: started
+        restart: true
