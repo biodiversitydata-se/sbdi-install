@@ -15,6 +15,7 @@ services:
     env_file: "/data/apps/{{ app_name }}/env/.envcollectory"
     #volumes:
     #  - db_data_collectory:/var/lib/mysql
+    command: --wait_timeout=86400 # 24 h
     networks:
       - basnet
 
