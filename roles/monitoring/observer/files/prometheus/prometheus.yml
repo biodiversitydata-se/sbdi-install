@@ -45,6 +45,9 @@ scrape_configs:
       - targets: [https://biodiversitydata.se]
         labels:
           name: biodiversitydata
+      - targets: [https://auth.biodiversitydata.se/cas/login]
+        labels:
+          name: auth
       - targets: [https://collections.biodiversitydata.se/ws/institution/count]
         labels:
           name: collections
@@ -54,9 +57,15 @@ scrape_configs:
       - targets: [https://logger.biodiversitydata.se/service/totalsByType]
         labels:
           name: logger
-      - targets: ['https://records.biodiversitydata.se/ws/occurrences/search?fq=&pageSize=1&taxa=groda']
+      - targets: ['https://records.biodiversitydata.se']
         labels:
           name: records
+      - targets: ['https://records.biodiversitydata.se/ws/occurrences/search?fq=&pageSize=1&taxa=groda']
+        labels:
+          name: records_ws
+      - targets: ['https://regions.biodiversitydata.se']
+        labels:
+          name: regions
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
