@@ -1,0 +1,49 @@
+version: '3.7'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_{{ app_name }}:
+    file: ./config/{{ app_name }}-config.properties
+
+services:
+
+  mysqldb-{{ app_name }}:
+    image: mysql:8.0
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - db_data_{{ app_name }}:/var/lib/mysql
+    networks:
+      - basnet
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    depends_on:
+      - mysqldb-{{ app_name }}
+    environment:
+      JAVA_OPTS: -Xmx2g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - data_{{ app_name }}:/data/{{ app_name }}
+    configs:
+      - source: config_{{ app_name }}
+        target: /tmp/{{ app_name }}-config.properties
+    command: dockerize -wait tcp://mysqldb-{{ app_name }}:3306 -timeout 60s -template /tmp/{{ app_name }}-config.properties:/data/{{ app_name }}/config/{{ app_name }}-config.properties catalina.sh run
+    networks:
+      - basnet
+
+volumes:
+  db_data_{{ app_name }}:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=live-manager-1,rw
+      device: ":/docker_nfs/var/volumes/db_data_{{ app_name }}"
+  data_{{ app_name }}:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=live-manager-1,rw
+      device: ":/docker_nfs/var/volumes/data_{{ app_name }}"
