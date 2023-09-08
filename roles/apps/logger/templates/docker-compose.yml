@@ -18,8 +18,8 @@ services:
     networks:
       - basnet
 
-  {{ app_name }}:
-    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+  {{ app_name }}service:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}-service:{{ app_version }}
     depends_on:
       - mysqldb-{{ app_name }}
     environment:
