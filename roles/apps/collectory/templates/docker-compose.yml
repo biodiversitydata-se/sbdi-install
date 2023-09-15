@@ -38,12 +38,12 @@ volumes:
   db_data_{{ app_name }}:
     driver: local
     driver_opts:
-      type: nfs
-      o: nfsvers=4,addr=live-manager-1,rw
-      device: ":/docker_nfs/var/volumes/db_data_{{ app_name }}"
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/db_data_{{ app_name }}"
   data_{{ app_name }}:
     driver: local
     driver_opts:
-      type: nfs
-      o: nfsvers=4,addr=live-manager-1,rw
-      device: ":/docker_nfs/var/volumes/data_{{ app_name }}"
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/data_{{ app_name }}"
