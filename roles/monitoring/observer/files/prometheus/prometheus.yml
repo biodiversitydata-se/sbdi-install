@@ -42,30 +42,72 @@ scrape_configs:
     params:
       module: [http_2xx]
     static_configs:
-      - targets: [https://biodiversitydata.se]
+      - targets: [https://api.biodiversitydata.se]
         labels:
-          name: biodiversitydata
+          name: api
+      - targets: [https://auth.biodiversitydata.se/apikey/]
+        labels:
+          name: apikey
+      - targets: [https://asv-portal.biodiversitydata.se]
+        labels:
+          name: asv-portal
       - targets: [https://auth.biodiversitydata.se/cas/login]
         labels:
           name: auth
       - targets: [https://collections.biodiversitydata.se/ws/institution/count]
         labels:
           name: collections
+      - targets: [https://ctzn.biodiversitydata.se]
+        labels:
+          name: ctzn
       - targets: [https://dashboard.biodiversitydata.se]
         labels:
           name: dashboard
+      - targets: [https://docs.biodiversitydata.se]
+        labels:
+          name: docs
+      - targets: [https://images.biodiversitydata.se]
+        labels:
+          name: images
+      - targets: [https://lists.biodiversitydata.se]
+        labels:
+          name: lists
       - targets: [https://logger.biodiversitydata.se/service/totalsByType]
         labels:
           name: logger
+      - targets: [https://mirroreum.biodiversitydata.se/auth-sign-in]
+        labels:
+          name: mirroreum
       - targets: ['https://records.biodiversitydata.se']
         labels:
           name: records
       - targets: ['https://records.biodiversitydata.se/ws/occurrences/search?fq=&pageSize=1&taxa=groda']
         labels:
-          name: records_ws
+          name: records/ws
       - targets: ['https://regions.biodiversitydata.se']
         labels:
           name: regions
+      - targets: [https://sds.biodiversitydata.se]
+        labels:
+          name: sds
+      - targets: [https://static.biodiversitydata.se]
+        labels:
+          name: static
+      - targets: ['https://species.biodiversitydata.se']
+        labels:
+          name: species
+      - targets: ['https://species.biodiversitydata.se/ws/search?q=groda&pageSize=1']
+        labels:
+          name: species/ws
+      - targets: [https://tools.biodiversitydata.se]
+        labels:
+          name: tools
+      - targets: [https://auth.biodiversitydata.se/userdetails/]
+        labels:
+          name: userdetails
+      - targets: [https://biodiversitydata.se]
+        labels:
+          name: www
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
