@@ -2,12 +2,14 @@
 # Prometheus
 #
 - name: Create Folder /srv/prometheus if not exist
+  become: true
   file:
     path: /srv/prometheus
     mode: 0755
     state: directory
 
 - name: Create prometheus configuration file
+  become: true
   copy:
     dest: /srv/prometheus/prometheus.yml
     src: prometheus/prometheus.yml
@@ -48,12 +50,14 @@
 # Grafana
 #
 - name: Create Folder /srv/grafana if not exist
+  become: true
   file:
     path: /srv/grafana
     mode: 0755
     state: directory
 
 - name: Create grafana configuration files
+  become: true
   copy:
     dest: /srv/
     src: grafana

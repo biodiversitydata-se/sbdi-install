@@ -2,17 +2,20 @@
 # Node exporter
 #
 - name: Download node exporter
+  become: true
   get_url:
     url: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
     dest: /srv
 
 - name: Unarchive node exporter
+  become: true
   unarchive:
     remote_src: yes
     src: /srv/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
     dest: /srv
 
 - name: Move node exporter to /usr/local/bin
+  become: true
   copy:
     src: /srv/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter
     dest: /usr/local/bin/node_exporter
@@ -22,6 +25,7 @@
     mode: 0755
 
 - name: Install unit file to systemd
+  become: true
   template:
     src: templates/node_exporter.service.j2
     dest: /etc/systemd/system/node_exporter.service
@@ -30,6 +34,7 @@
     mode: 0600
 
 - name: Configure systemd to use service
+  become: true
   systemd:
     daemon_reload: yes
     enabled: yes

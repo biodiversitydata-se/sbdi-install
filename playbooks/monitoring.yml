@@ -3,7 +3,6 @@
 # 
 - name: Install Observability stack (targets)
   hosts: monitoring_target
-  become: true
   tags:
     - target
   roles:
@@ -37,7 +36,6 @@
 #
 - name: Install Observability stack (observer)
   hosts: monitoring_observer
-  become: true
   tags:
     - observer
   roles:
