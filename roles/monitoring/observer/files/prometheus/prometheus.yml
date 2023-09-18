@@ -36,7 +36,7 @@ scrape_configs:
         - "live-pybossa:9101"
 
   - job_name: 'blackbox-http'
-    scrape_interval: 60s
+    scrape_interval: 300s
     scrape_timeout: 10s
     metrics_path: /probe
     params:
