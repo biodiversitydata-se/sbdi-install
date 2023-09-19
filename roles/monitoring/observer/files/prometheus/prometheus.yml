@@ -81,7 +81,7 @@ scrape_configs:
       - targets: ['https://records.biodiversitydata.se']
         labels:
           name: records
-      - targets: ['https://records.biodiversitydata.se/ws/occurrences/search?fq=&pageSize=1&taxa=groda']
+      - targets: ['https://records.biodiversitydata.se/ws/']
         labels:
           name: records/ws
       - targets: ['https://regions.biodiversitydata.se']
@@ -96,7 +96,7 @@ scrape_configs:
       - targets: ['https://species.biodiversitydata.se']
         labels:
           name: species
-      - targets: ['https://species.biodiversitydata.se/ws/search?q=groda&pageSize=1']
+      - targets: ['https://species.biodiversitydata.se/ws/']
         labels:
           name: species/ws
       - targets: [https://tools.biodiversitydata.se]
