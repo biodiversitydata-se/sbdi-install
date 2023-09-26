@@ -1,0 +1,67 @@
+version: '3.7'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_{{ app_name }}:
+    file: ./config/{{ app_name }}-config.yml
+
+services:
+
+  elasticsearch-{{ app_name }}:
+    image: elasticsearch:7.17.13
+    environment:
+      - discovery.type=single-node
+      - TZ=Europe/Stockholm
+    volumes:
+      - data_{{ app_name }}_elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - basnet
+
+  pgsql-{{ app_name }}:
+    image: postgres:15.4
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: md5
+    volumes:
+      - db_data_{{ app_name }}:/var/lib/postgresql/data
+    networks:
+      - basnet
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    depends_on:
+      - pgsql-{{ app_name }}
+    environment:
+      JAVA_OPTS: -Xmx4g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - data_{{ app_name }}:/data/{{ app_name }}/store
+    configs:
+      - source: config_{{ app_name }}
+        target: /tmp/{{ app_name }}-config.yml
+    command: dockerize -wait tcp://pgsql-{{ app_name }}:5432 -timeout 60s -wait tcp://elasticsearch-{{ app_name }}:9200 -timeout 60s -template /tmp/{{ app_name }}-config.yml:/data/{{ app_name }}/config/{{ app_name }}-config.yml catalina.sh run
+    networks:
+      - basnet
+
+volumes:
+  db_data_{{ app_name }}:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/db_data_{{ app_name }}"
+  data_{{ app_name }}_elasticsearch:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/data_{{ app_name }}_elasticsearch"
+  data_{{ app_name }}:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/data_{{ app_name }}"
