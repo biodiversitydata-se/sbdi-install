@@ -93,6 +93,12 @@ scrape_configs:
       - targets: [https://static.biodiversitydata.se]
         labels:
           name: static
+      - targets: ['https://spatial.biodiversitydata.se/buildInfo']
+        labels:
+          name: spatial
+      - targets: ['https://spatial.biodiversitydata.se/ws/buildInfo']
+        labels:
+          name: spatial/ws
       - targets: ['https://species.biodiversitydata.se']
         labels:
           name: species
