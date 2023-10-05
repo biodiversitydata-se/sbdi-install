@@ -17,7 +17,7 @@ scrape_configs:
         - "live-cassandra-4:9100"
         - "live-molecular-1:9100"
         - "live-ext-1:9100"
-        - "live-pybossa:9100"
+#        - "live-pybossa:9100"
 
   - job_name: cadvisor
     static_configs:
