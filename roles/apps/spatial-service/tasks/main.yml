@@ -1,0 +1,56 @@
+- name: Ensure configuration directories
+  become: true
+  file:
+    path: /data/apps/{{item}}
+    owner: root
+    group: docker
+    mode: 0775
+    state: directory
+  with_items:
+    - "{{ app_name }}"
+    - "{{ app_name }}/config"
+    - "{{ app_name }}/env"
+  tags:
+    - app_directory
+
+- name: Install configuration file
+  become: true
+  copy:
+    src: config/{{ app_name }}-config.yml
+    dest: /data/apps/{{ app_name }}/config/{{ app_name }}-config.yml
+    owner: root
+    group: docker
+    mode: 0664
+  tags:
+    - app_config
+
+- name: Install env template
+  become: true
+  copy:
+    src: env/{{ item }}
+    dest: /data/apps/{{ app_name }}/env/{{ item }}
+    owner: root
+    group: docker
+    mode: 0644
+  with_items:
+    - env{{ app_name }}.template
+    - envgeoserver.template
+    - envpostgis.template
+  tags:
+    - env_template
+
+- name: Install docker-compose file
+  become: true
+  template:
+    src: docker-compose.yml
+    dest: /data/apps/{{ app_name }}/docker-compose.yml
+    owner: root
+    group: docker
+    mode: 0664
+  tags:
+    - deploy
+
+- name: Deploy stack {{ app_name }} {{ app_version }}
+  command: docker stack deploy -c /data/apps/{{ app_name }}/docker-compose.yml {{ app_name }}
+  tags:
+    - deploy

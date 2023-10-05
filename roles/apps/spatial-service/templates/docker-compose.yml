@@ -1,0 +1,73 @@
+version: '3.7'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_{{ app_name }}:
+    file: ./config/{{ app_name }}-config.yml
+
+services:
+
+  geoserver-{{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/geoserver:1.0.1
+    environment:
+      JAVA_OPTS: -Xmx4g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+      TZ: Europe/Stockholm
+    env_file: "/data/apps/{{ app_name }}/env/.envgeoserver"
+    volumes:
+      - data_{{ app_name }}_geoserver:/data/geoserver_data_dir
+      - data_{{ app_name }}:/data/spatial-data
+    networks:
+      - basnet
+
+  postgis-{{ app_name }}:
+    image: postgis/postgis:13-3.4
+    env_file: "/data/apps/{{ app_name }}/env/.envpostgis"
+    volumes:
+      - db_data_{{ app_name }}:/var/lib/postgresql/data
+    networks:
+      - basnet
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    depends_on:
+      - postgis-{{ app_name }}
+    environment:
+      JAVA_OPTS: -Xmx31g -Xms128m -Xss1024k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - data_{{ app_name }}:/data/spatial-data
+    configs:
+      - source: config_{{ app_name }}
+        target: /tmp/{{ app_name }}-config.yml
+    command: dockerize -wait tcp://postgis-{{ app_name }}:5432 -timeout 60s -wait tcp://geoserver-{{ app_name }}:8080 -timeout 60s -template /tmp/{{ app_name }}-config.yml:/data/{{ app_name }}/config/{{ app_name }}-config.yml catalina.sh run
+    networks:
+      - basnet
+    deploy:
+      restart_policy:
+        condition: none
+      placement:
+        constraints:
+          - node.hostname == live-manager-1
+
+volumes:
+  db_data_{{ app_name }}:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/db_data_{{ app_name }}"
+  data_{{ app_name }}:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/data_{{ app_name }}"
+  data_{{ app_name }}_geoserver:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/data_{{ app_name }}_geoserver"
