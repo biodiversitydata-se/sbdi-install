@@ -12,8 +12,8 @@
   become: true
   become_user: sbdi
   copy:
-    dest: /home/sbdi/.ssh/config
     src: ssh_config
+    dest: /home/sbdi/.ssh/config
     mode: 0664
 
 - name: Set ownership of backup directory
@@ -33,3 +33,19 @@
     - bin
     - data
     - log
+
+- name: Copy manual.txt
+  become: true
+  become_user: sbdi
+  copy:
+    src: manual.txt
+    dest: /backup/data/manual.txt
+    mode: 0664
+
+- name: Copy scripts
+  become: true
+  become_user: sbdi
+  copy:
+    src: bin/
+    dest: /backup/bin/
+    mode: 0775
