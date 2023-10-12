@@ -8,6 +8,14 @@
     ssh_key_type: ed25519
     ssh_key_file: .ssh/id_ed25519
 
+- name: Copy ssh config
+  become: true
+  become_user: sbdi
+  copy:
+    dest: /home/sbdi/.ssh/config
+    src: ssh_config
+    mode: 0664
+
 - name: Set ownership of backup directory
   become: true
   ansible.builtin.file:
