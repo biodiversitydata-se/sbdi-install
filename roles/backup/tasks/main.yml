@@ -49,3 +49,12 @@
     src: bin/
     dest: /backup/bin/
     mode: 0775
+
+- name: Ensure a crontab job for backups
+  become: true
+  become_user: sbdi
+  cron:
+    name: "backup"
+    minute: "0"
+    hour: "3"
+    job: "/backup/bin/nightly.sh > /backup/log/nightly_$(date +\\%y\\%m\\%d).log 2>&1"
