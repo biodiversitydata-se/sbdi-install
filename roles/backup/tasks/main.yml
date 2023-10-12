@@ -7,3 +7,21 @@
     generate_ssh_key: yes
     ssh_key_type: ed25519
     ssh_key_file: .ssh/id_ed25519
+
+- name: Set ownership of backup directory
+  become: true
+  ansible.builtin.file:
+    path: /backup
+    owner: sbdi
+    group: sbdi
+
+- name: Create directory structure
+  become: true
+  become_user: sbdi
+  file:
+    path: /backup/{{ item }}
+    state: directory
+  with_items:
+    - bin
+    - data
+    - log
