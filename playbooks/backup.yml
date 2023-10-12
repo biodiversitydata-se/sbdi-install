@@ -1,0 +1,4 @@
+- name: Setup backup server
+  hosts: backup_server
+  roles:
+    - ../roles/backup

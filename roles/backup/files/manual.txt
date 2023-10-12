@@ -1,0 +1,7 @@
+/backup/bin/backup-docker_nfs-dir.sh bie-service data_bie_solr
+
+/backup/bin/backup-docker_nfs-dir.sh image-service data_image-service_elasticsearch
+/backup/bin/backup-docker_nfs-dir.sh image-service data_image-service
+
+/backup/bin/backup-docker_nfs-dir.sh spatial-service data_spatial-service_geoserver
+/backup/bin/backup-docker_nfs-dir.sh spatial-service data_spatial-service

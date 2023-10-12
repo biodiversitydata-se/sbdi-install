@@ -17,3 +17,6 @@ live-cassandra-4
 live-ext-1 ansible_user=ubuntu
 live-molecular-1 ansible_user=ubuntu
 live-pybossa ansible_user=ubuntu
+
+[backup_server]
+nrm-sbdibackup
