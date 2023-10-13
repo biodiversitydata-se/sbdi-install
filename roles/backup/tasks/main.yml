@@ -31,8 +31,22 @@
     state: directory
   with_items:
     - bin
-    - data
     - log
+    - data
+    - data/
+    - data/api
+    - data/apikey
+    - data/auth
+    - data/bie-service
+    - data/collectory_1
+    - data/image-service
+    - data/logger
+    - data/matomo
+    - data/spatial-service
+    - data/specieslists
+    - data/wordpress_docs
+    - data/wordpress_main
+    - data/wordpress_tools
 
 - name: Copy manual.txt
   become: true
