@@ -1,0 +1,7 @@
+Host live-manager-1
+    HostName 192.121.208.20
+    User ubuntu
+
+Host live-ext-1
+    HostName 192.121.209.107
+    User ubuntu

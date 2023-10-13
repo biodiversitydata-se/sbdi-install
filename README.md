@@ -5,3 +5,4 @@ Ansible playbooks for installing and updating the main applications of the SBDI 
 ## Roles
 - [Apps](roles/apps/README.md)
 - [Monitoring](roles/monitoring/README.md)
+- [Backup](roles/backup/README.md)

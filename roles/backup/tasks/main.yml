@@ -1,0 +1,67 @@
+- name: Create user with ssh key
+  ansible.builtin.user:
+    name: sbdi
+    password: ''
+    shell: /bin/bash
+    generate_ssh_key: yes
+    ssh_key_type: ed25519
+    ssh_key_file: .ssh/id_ed25519
+
+- name: Copy ssh config
+  become_user: sbdi
+  copy:
+    src: ssh_config
+    dest: /home/sbdi/.ssh/config
+    mode: 0664
+
+- name: Set ownership of backup directory
+  ansible.builtin.file:
+    path: /backup
+    owner: sbdi
+    group: sbdi
+
+- name: Create directory structure
+  become_user: sbdi
+  file:
+    path: /backup/{{ item }}
+    state: directory
+  with_items:
+    - bin
+    - log
+    - data
+    - data/
+    - data/api
+    - data/apikey
+    - data/cas
+    - data/bie-service
+    - data/collectory
+    - data/image-service
+    - data/logger
+    - data/matomo
+    - data/spatial-service
+    - data/specieslists
+    - data/wordpress_docs
+    - data/wordpress_main
+    - data/wordpress_tools
+
+- name: Copy manual-backups.txt
+  become_user: sbdi
+  copy:
+    src: manual-backups.txt
+    dest: /backup/data/manual-backups.txt
+    mode: 0664
+
+- name: Copy scripts
+  become_user: sbdi
+  copy:
+    src: bin/
+    dest: /backup/bin/
+    mode: 0775
+
+- name: Ensure a crontab job for backups
+  become_user: sbdi
+  cron:
+    name: "backup"
+    minute: "0"
+    hour: "3"
+    job: "/backup/bin/nightly.sh > /backup/log/nightly_$(date +\\%y\\%m\\%d).log 2>&1"
