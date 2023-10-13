@@ -18,3 +18,10 @@
 
 # live-ext-1
 /backup/bin/backup-live-ext-1.sh
+
+# disk usage
+echo "== Disk usage"
+du -h --max-depth 1 /backup/data
+
+echo
+echo "== All done $(date)"
