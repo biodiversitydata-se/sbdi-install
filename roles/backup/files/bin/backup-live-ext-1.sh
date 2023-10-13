@@ -42,6 +42,7 @@ docker cp mongodbcas:/tmp/mongodbcas_dump /tmp
 EOL
 echo "- rsync: $(date)"
 rsync -a live-ext-1:/tmp/mongodbcas_dump/ /backup/data/cas/mongodbcas-dump__${TODAY}
+touch /backup/data/cas/mongodbcas-dump__${TODAY}
 echo "- done: $(date)"
 echo
 

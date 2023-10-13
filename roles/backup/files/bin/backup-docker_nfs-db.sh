@@ -12,5 +12,6 @@ echo "- chmod: $(date)"
 ssh live-manager-1 "sudo chmod -R a+rx /data/backup/nrm-sbdibackup/${DIR}"
 echo "- rsync: $(date)"
 rsync -a live-manager-1:/data/backup/nrm-sbdibackup/${DIR}/ /backup/data/$APP/${DIR}__${TODAY}
+touch /backup/data/$APP/${DIR}__${TODAY}
 echo "- done: $(date)"
 echo

@@ -10,7 +10,6 @@
 /backup/bin/backup-docker_nfs-db.sh wordpress_main wordpress_main_db
 /backup/bin/backup-docker_nfs-db.sh wordpress_docs wordpress_docs_db
 /backup/bin/backup-docker_nfs-db.sh wordpress_tools wordpress_tools_db
-
 /backup/bin/backup-docker_nfs-dir.sh collectory data_collectory
 /backup/bin/backup-docker_nfs-dir.sh wordpress_main wordpress_main_html
 /backup/bin/backup-docker_nfs-dir.sh wordpress_docs wordpress_docs_html
@@ -19,7 +18,10 @@
 # live-ext-1
 /backup/bin/backup-live-ext-1.sh
 
-# disk usage
+# Remove old backup files and logs
+/backup/bin/remove-old-files.sh
+
+# Print disk usage
 echo "== Disk usage"
 du -h --max-depth 1 /backup/data
 

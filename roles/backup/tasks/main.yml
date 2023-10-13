@@ -64,4 +64,4 @@
     name: "backup"
     minute: "0"
     hour: "3"
-    job: "/backup/bin/nightly.sh > /backup/log/nightly_$(date +\\%y\\%m\\%d).log 2>&1"
+    job: "/backup/bin/nightly.sh > /backup/log/nightly__$(date +\\%y\\%m\\%d).log 2>&1"
