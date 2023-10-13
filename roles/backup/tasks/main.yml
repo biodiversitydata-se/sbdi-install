@@ -32,7 +32,7 @@
     - data/
     - data/api
     - data/apikey
-    - data/auth
+    - data/cas
     - data/bie-service
     - data/collectory_1
     - data/image-service
