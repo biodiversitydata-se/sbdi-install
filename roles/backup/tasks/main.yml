@@ -57,6 +57,8 @@
     src: bin/
     dest: /backup/bin/
     mode: 0775
+  tags:
+    - scripts
 
 - name: Ensure a crontab job for backups
   become_user: sbdi
