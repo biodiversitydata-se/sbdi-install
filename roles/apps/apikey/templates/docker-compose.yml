@@ -1,0 +1,32 @@
+version: '3.7'
+
+networks:
+  default:  
+    external: true
+    name: sbdinet
+
+services:
+
+  mysqldb:
+    image: mysql:8.0
+    container_name: "{{ app_name }}-mysqldb"
+    environment:
+      - LANG=C.UTF-8
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - db_data_{{ app_name }}:/var/lib/mysql
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    container_name: "{{ app_name }}-{{ app_name }}"
+    depends_on:
+      - mysqldb
+    environment:
+      JAVA_OPTS: -Xmx2g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - /data/apps/{{ app_name }}/config/{{ app_name }}-config.yml:/tmp/{{ app_name }}-config.yml
+    command: dockerize -wait tcp://{{ app_name }}-mysqldb:3306 -timeout 60s -template /tmp/{{ app_name }}-config.yml:/data/{{ app_name }}/config/{{ app_name }}-config.yml catalina.sh run
+
+volumes:
+  db_data_{{ app_name }}:

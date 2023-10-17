@@ -1,0 +1,92 @@
+# CAS Config
+security:
+  cas:
+    casServerName: https://auth.biodiversitydata.se
+    casServerUrlPrefix: ${security.cas.casServerName}/cas
+    loginUrl: ${security.cas.casServerUrlPrefix}/login
+    logoutUrl: ${security.cas.casServerUrlPrefix}/logout
+    appServerName: https://auth.biodiversitydata.se
+    authCookieName: ALA-Auth
+  user:
+    name: admin
+    password: secret
+    role:
+      - ACTUATOR
+  basic:
+    enabled: true
+    authorizeMode: role
+    realm: ALA CAS
+    path:
+      - /status/**
+endpoints:
+  enabled: true
+management:
+  security:
+    enabled: true
+    roles: ACTUATOR
+
+serverURL: https://auth.biodiversitydata.se
+serverName: https://auth.biodiversitydata.se
+grails:
+  serverURL: https://auth.biodiversitydata.se/apikey
+server:
+  port: 8080
+  contextPath: /apikey
+  servlet:
+    contextPath: /apikey
+  forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+      port-header: x-forwarded-port
+      remote-ip-header: x-forwarded-for
+      protocol-header-https-value: https
+
+# Data source configuration
+dataSource:
+  dbCreate: "none"
+  url: jdbc:mysql://apikey-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?autoReconnect=true&connectTimeout=0&serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+  username: {{ .Env.MYSQL_USER }}
+  password: {{ .Env.MYSQL_PASSWORD }}
+
+ala:
+  baseURL: https://biodiversitydata.se
+
+supportEmail: support@biodiversitydata.se
+homeUrl: https://tools.biodiversitydata.se
+mainTitle: Swedish Biodiversity Data Infrastructure
+emailSenderTitle: Swedish Biodiversity Data Infrastructure
+emailSender: admin@biodiversitydata.se
+
+sightings.url: /mine
+spatial.url: https://spatial.biodiversitydata.se?tool=log
+volunteer.url: /user/myStats
+lists.url: https://lists.biodiversitydata.se/speciesList/list
+biocache.search.url: https://records.biodiversitydata.se/occurrences/search
+alerts.url:
+
+# this property is read/used by ala-auth-plugin (included by apikey)
+userDetails:
+  url: https://auth.biodiversitydata.se/userdetails/
+
+# Header and footer
+headerAndFooter:
+  baseURL: https://static.biodiversitydata.se
+  version: 2
+ala.baseURL: https://biodiversitydata.se
+bie.baseURL: https://species.biodiversitydata.se
+bie.searchPath: /search
+
+# Skin options
+skin.layout: _main
+skin.fluidLayout: false
+skin.orgNameLong: Swedish Biodiversity Data Infrastructure
+skin.orgNameShort: SBDI
+skin.favicon: https://static.biodiversitydata.se/favicon.ico
+
+spring:
+  flyway:
+    baselineOnMigrate: true
+  session:
+    enabled: false
+    store-type: none
