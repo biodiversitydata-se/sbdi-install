@@ -64,6 +64,6 @@
   become_user: sbdi
   cron:
     name: "backup"
-    minute: "0"
-    hour: "5" # UTC
+    minute: "1"
+    hour: "3" # CET
     job: "/backup/bin/nightly.sh > /backup/log/nightly__$(date +\\%y\\%m\\%d).log 2>&1"
