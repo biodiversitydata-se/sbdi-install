@@ -7,7 +7,7 @@ ssh live-ext-1 'touch .hushlogin'
 echo "== apikey, date: $TODAY"
 echo "- dump: $(date)"
 ssh -T live-ext-1 <<'EOL'
-docker exec mysqldbapikey /bin/bash -c 'mysqldump -u root -p$MYSQL_ROOT_PASSWORD apikey' > /tmp/apikey-dump.sql
+docker exec apikey-mysqldb /bin/bash -c 'mysqldump -u root -p$MYSQL_ROOT_PASSWORD apikey' > /tmp/apikey-dump.sql
 EOL
 echo "- rsync: $(date)"
 rsync -a live-ext-1:/tmp/apikey-dump.sql /backup/data/apikey/apikey-dump__${TODAY}.sql
