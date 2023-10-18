@@ -1,5 +1,8 @@
 [swarm_managers]
 127.0.0.1 ansible_connection=local
 
+[ext_server]
+127.0.0.1 ansible_connection=local
+
 [backup_server]
 127.0.0.1 ansible_connection=local

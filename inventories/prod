@@ -1,6 +1,9 @@
 [swarm_managers]
 live-manager-1
 
+[ext_server]
+live-ext-1 ansible_user=ubuntu
+
 [monitoring_observer]
 live-ext-1 ansible_user=ubuntu
 

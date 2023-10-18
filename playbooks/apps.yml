@@ -1,5 +1,7 @@
 - name: Deploy app
-  hosts: swarm_managers
+  vars:
+    app_hosts:
+      apikey: ext_server
   vars_prompt:
   - name: app_name
     prompt: App name
@@ -7,6 +9,7 @@
   - name: app_version
     prompt: App version
     private: false
+  hosts: "{{ app_hosts[app_name] | default('swarm_managers') }}"
 
   tasks:
 
