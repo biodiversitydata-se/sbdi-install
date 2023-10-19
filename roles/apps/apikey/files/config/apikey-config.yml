@@ -83,6 +83,7 @@ skin.fluidLayout: false
 skin.orgNameLong: Swedish Biodiversity Data Infrastructure
 skin.orgNameShort: SBDI
 skin.favicon: https://static.biodiversitydata.se/favicon.ico
+skin.homeUrl: https://tools.biodiversitydata.se
 
 spring:
   flyway:
