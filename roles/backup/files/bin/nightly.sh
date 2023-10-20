@@ -18,6 +18,9 @@
 # live-ext-1
 /backup/bin/backup-live-ext-1.sh
 
+# live-molecular-1
+/backup/bin/backup-live-molecular-1.sh
+
 # Remove old backup files and logs
 /backup/bin/remove-old-files.sh
 

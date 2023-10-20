@@ -5,3 +5,7 @@ Host live-manager-1
 Host live-ext-1
     HostName 192.121.209.107
     User ubuntu
+
+Host live-molecular-1
+    HostName 192.121.208.234
+    User ubuntu

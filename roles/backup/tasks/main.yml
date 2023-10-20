@@ -38,6 +38,7 @@
     - data/image-service
     - data/logger
     - data/matomo
+    - data/mol-mod
     - data/spatial-service
     - data/specieslists
     - data/wordpress_docs
