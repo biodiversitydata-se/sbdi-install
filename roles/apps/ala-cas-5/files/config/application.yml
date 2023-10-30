@@ -18,7 +18,7 @@ jndi:
   hikari:
     jdbccas:
       driverClass: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://cas-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&logger=Slf4JLogger&gatherPerfMetrics=true&logSlowQueries=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true&nullNamePatternMatchesAll=true&noAccessToProcedureBodies=true&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://ala-cas-5-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&logger=Slf4JLogger&gatherPerfMetrics=true&logSlowQueries=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true&nullNamePatternMatchesAll=true&noAccessToProcedureBodies=true&useSSL=false&allowPublicKeyRetrieval=true
       user: {{ .Env.MYSQL_USER }}
       password: {{ .Env.MYSQL_PASSWORD }}
       dataSourceProperties:
@@ -46,7 +46,7 @@ cas:
   audit:
     mongo:
       #sslEnabled: false
-      clientUri: mongodb://{{ .Env.CAS_AUDIT_USERNAME }}:{{ .Env.CAS_AUDIT_PASSWORD }}@cas-mongodb:27017/cas-audit-repository
+      clientUri: mongodb://{{ .Env.CAS_AUDIT_USERNAME }}:{{ .Env.CAS_AUDIT_PASSWORD }}@ala-cas-5-mongodb:27017/cas-audit-repository
       #host: localhost
       #port: 27017
       #replicaSet:
@@ -127,7 +127,7 @@ cas:
       init-from-json: true
     mongo:
       #sslEnabled: false
-      clientUri: mongodb://{{ .Env.CAS_SERVICE_USERNAME }}:{{ .Env.CAS_SERVICE_PASSWORD }}@cas-mongodb:27017/cas-service-registry
+      clientUri: mongodb://{{ .Env.CAS_SERVICE_USERNAME }}:{{ .Env.CAS_SERVICE_PASSWORD }}@ala-cas-5-mongodb:27017/cas-service-registry
       #host: localhost
       #port: 27017
       #replicaSet:
@@ -153,7 +153,7 @@ cas:
         update-indexes: true
         drop-indexes: false
         #sslEnabled: false
-        clientUri: mongodb://{{ .Env.CAS_TICKET_USERNAME }}:{{ .Env.CAS_TICKET_PASSWORD }}@cas-mongodb:27017/cas-ticket-registry
+        clientUri: mongodb://{{ .Env.CAS_TICKET_USERNAME }}:{{ .Env.CAS_TICKET_PASSWORD }}@ala-cas-5-mongodb:27017/cas-ticket-registry
         #host: mongodbcas
         #port: 27017
         #replicaSet:
@@ -233,7 +233,7 @@ management:
 spring:
   flyway:
     baselineOnMigrate: true
-    url: jdbc:mysql://cas-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&nullCatalogMeansCurrent=true&nullNamePatternMatchesAll=true&noAccessToProcedureBodies=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://ala-cas-5-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&nullCatalogMeansCurrent=true&nullNamePatternMatchesAll=true&noAccessToProcedureBodies=true&useSSL=false&allowPublicKeyRetrieval=true
     user: {{ .Env.MYSQL_USER }}
     password: {{ .Env.MYSQL_PASSWORD }}
   session:

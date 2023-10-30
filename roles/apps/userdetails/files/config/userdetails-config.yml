@@ -71,7 +71,7 @@ redirectAfterFirstLogin: ${grails.serverURL}/myprofile
 # Data source configuration
 dataSource:
   dbCreate: "none"
-  url: jdbc:mysql://cas-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?autoReconnect=true&connectTimeout=0&serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+  url: jdbc:mysql://ala-cas-5-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?autoReconnect=true&connectTimeout=0&serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
   username: {{ .Env.MYSQL_USER }}
   password: {{ .Env.MYSQL_PASSWORD }}
 

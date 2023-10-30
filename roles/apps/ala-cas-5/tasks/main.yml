@@ -14,14 +14,16 @@
   tags:
     - app_directory
 
-- name: Install configuration file
+- name: Install configuration files
   become: true
   copy:
-    src: config/application.yml
-    dest: /data/apps/{{ app_name }}/config/application.yml
+    src : "{{ item }}"
+    dest: /data/apps/{{ app_name }}/config
     owner: root
     group: docker
     mode: 0664
+  with_items:
+    - config/
   tags:
     - app_config
 

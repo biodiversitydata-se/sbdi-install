@@ -15,4 +15,4 @@ services:
     env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
     volumes:
       - /data/apps/{{ app_name }}/config/{{ app_name }}-config.yml:/tmp/{{ app_name }}-config.yml
-    command: dockerize -wait tcp://cas-mysqldb:3306 -timeout 60s -template /tmp/{{ app_name }}-config.yml:/data/{{ app_name }}/config/{{ app_name }}-config.yml catalina.sh run
+    command: dockerize -wait tcp://ala-cas-5-mysqldb:3306 -timeout 60s -template /tmp/{{ app_name }}-config.yml:/data/{{ app_name }}/config/{{ app_name }}-config.yml catalina.sh run

@@ -35,9 +35,10 @@ services:
       JAVA_OPTS: -Xmx2g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
     env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
     volumes:
-      - /data/apps/{{ app_name }}/config/{{ app_name }}-config.yml:/tmp/{{ app_name }}-config.yml
+      - /data/apps/{{ app_name }}/config/application.yml:/tmp/application.yml
       - /data/apps/{{ app_name }}/config/pwe.properties:/tmp/pwe.properties
-    command: dockerize -wait tcp://{{ app_name }}-mysqldb:3306 -timeout 60s -wait tcp://{{ app_name }}-mongodb:27017 -timeout 60s -template /tmp/{{ app_name }}-config.yml:/data/cas/config/{{ app_name }}-config.yml -template /tmp/pwe.properties:/data/cas/config/pwe.properties java -Dcas.standalone.configurationDirectory=/data/cas/config -Dala.password.properties=/data/cas/config/pwe.properties -jar /app/cas-exec.war
+      - /data/apps/{{ app_name }}/config/log4j2.xml:/data/cas/config/log4j2.xml
+    command: dockerize -wait tcp://{{ app_name }}-mysqldb:3306 -timeout 60s -wait tcp://{{ app_name }}-mongodb:27017 -timeout 60s -template /tmp/application.yml:/data/cas/config/application.yml -template /tmp/pwe.properties:/data/cas/config/pwe.properties java -Dcas.standalone.configurationDirectory=/data/cas/config -Dala.password.properties=/data/cas/config/pwe.properties -jar /app/cas-exec.war
 
 volumes:
   db_data_mysql_{{ app_name }}:
