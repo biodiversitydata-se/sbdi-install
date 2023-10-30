@@ -1,0 +1,87 @@
+---
+# tasks file for specieslist-webapp
+- name: Ensure configuration and script directories
+  become: true
+  file:
+    path: "/data/apps/{{item}}"
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  with_items:
+    - "{{ app_name }}"
+    - "{{ app_name }}/env"
+    - "{{ app_name }}/config"
+    - "{{ app_name }}/initdb.d"
+
+  tags:
+    - app_directory
+
+- name: Ensure write access for docker group
+  become: true
+  file:
+    path: "/data/apps/{{ app_name }}"
+    mode: 0775
+    group: docker
+    recurse: yes
+    state: directory
+  with_items:
+    - "{{ app_name }}"
+  tags:
+    - write_access
+
+- name: Install "envspecieslist-webapp.template"
+  become: true
+  copy:
+    src: env/env{{ app_name }}.template
+    dest: "/data/apps/{{ app_name }}/env/env{{ app_name }}.template"
+    mode: 0644
+  tags:
+    - env_template
+
+- name: Copy Database initialization files
+  become: true
+  copy:
+    src : "{{ item }}"
+    dest : "/data/apps/{{ app_name }}/initdb.d"
+    mode: 0644
+  with_items:
+    - initdb.d/
+  tags:
+    - db_schema
+
+- name: Install configuration file
+  become: true
+  copy:
+    src: config/{{ app_name }}-config.properties
+    dest: /data/apps/{{ app_name }}/config/{{ app_name }}-config.properties
+    owner: root
+    group: docker
+    mode: 0664
+  tags:
+    - app_config
+
+- name: copy logback config
+  template:
+    src: logback.xml
+    dest: "/data/apps/{{ app_name }}/config/logback.xml"
+  tags:
+    - logback
+
+- name: Install "docker-compose.yml"
+  become: true
+  template:
+    src: docker-compose.yml
+    dest: "/data/apps/{{ app_name }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - docker_compose
+    - deploy
+
+- name: Deploy stack {{ app_name }} {{ app_version }}
+  command: docker stack deploy -c /data/apps/{{ app_name }}/docker-compose.yml {{ app_name }}
+  tags:
+    - deploy
+

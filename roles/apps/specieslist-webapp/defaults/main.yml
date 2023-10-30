@@ -1,0 +1,3 @@
+---
+# defaults file for specieslist-webapp
+docker_volumes: ['db_data_specieslists','data_nameindex']
