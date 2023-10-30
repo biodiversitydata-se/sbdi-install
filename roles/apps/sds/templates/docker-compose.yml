@@ -1,0 +1,30 @@
+version: '3.7'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_{{ app_name }}:
+    file: ./config/{{ app_name }}-config.properties
+
+services:
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/sds-webapp2:{{ app_version }}
+    environment:
+      JAVA_OPTS: -Xmx4g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    configs:
+      - source: config_{{ app_name }}
+        target: /data/{{ app_name }}/config/{{ app_name }}-config.properties
+    volumes:
+      - data_nameindex:/data/lucene/namematching
+    networks:
+      - basnet
+
+volumes:
+  data_nameindex:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=live-manager-1,rw
+      device: ":/docker_nfs/var/volumes/data_nameindex"
