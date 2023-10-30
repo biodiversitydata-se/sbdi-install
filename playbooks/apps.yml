@@ -2,6 +2,7 @@
   vars:
     app_hosts:
       apikey: ext_server
+      userdetails: ext_server
   vars_prompt:
   - name: app_name
     prompt: App name
