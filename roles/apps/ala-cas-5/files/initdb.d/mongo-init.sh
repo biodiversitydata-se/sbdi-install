@@ -6,8 +6,8 @@ if [ -n "${MONGO_INITDB_ROOT_USERNAME:-}" ] && [ -n "${MONGO_INITDB_ROOT_PASSWOR
 mongosh -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase $MONGO_INITDB_DATABASE<<EOF
 db=db.getSiblingDB('cas-audit-repository');
 db.createUser({
-  user:  'audit',
-  pwd: 'audit',
+  user:  '$CAS_AUDIT_USERNAME',
+  pwd: '$CAS_AUDIT_PASSWORD',
   roles: [{
     role: 'readWrite',
     db: 'cas-audit-repository'
@@ -15,8 +15,8 @@ db.createUser({
 });
 db=db.getSiblingDB('cas-ticket-registry');
 db.createUser({
-  user:  'ticket',
-  pwd: 'ticket',
+  user:  '$CAS_TICKET_USERNAME',
+  pwd: '$CAS_TICKET_PASSWORD',
   roles: [{
     role: 'readWrite',
     db: 'cas-ticket-registry'
@@ -24,8 +24,8 @@ db.createUser({
 });
 db=db.getSiblingDB('cas-service-registry');
 db.createUser({
-  user:  'service',
-  pwd: 'service',
+  user:  '$CAS_SERVICE_USERNAME',
+  pwd: '$CAS_SERVICE_PASSWORD',
   roles: [{
     role: 'readWrite',
     db: 'cas-service-registry'
