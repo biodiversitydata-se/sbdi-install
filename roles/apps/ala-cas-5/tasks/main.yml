@@ -62,7 +62,7 @@
   tags:
     - deploy
 
-#- name: Deploy stack {{ app_name }} {{ app_version }}
-#  command: docker compose -f /data/apps/{{ app_name }}/docker-compose.yml up --detach
-#  tags:
-#    - deploy
+- name: Deploy stack {{ app_name }} {{ app_version }}
+  command: docker compose -f /data/apps/{{ app_name }}/docker-compose.yml up --detach
+  tags:
+    - deploy
