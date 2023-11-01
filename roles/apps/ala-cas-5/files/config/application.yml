@@ -124,7 +124,7 @@ cas:
       dataSourceName: java:comp/env/jdbccas
   service-registry:
     core:
-      init-from-json: true
+      init-from-json: false
     mongo:
       #sslEnabled: false
       clientUri: mongodb://{{ .Env.CAS_SERVICE_USERNAME }}:{{ .Env.CAS_SERVICE_PASSWORD }}@ala-cas-5-mongodb:27017/cas-service-registry
