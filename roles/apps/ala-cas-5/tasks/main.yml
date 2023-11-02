@@ -1,0 +1,68 @@
+- name: Ensure configuration directories
+  become: true
+  file:
+    path: /data/apps/{{item}}
+    owner: root
+    group: docker
+    mode: 0775
+    state: directory
+  with_items:
+    - "{{ app_name }}"
+    - "{{ app_name }}/config"
+    - "{{ app_name }}/env"
+    - "{{ app_name }}/initdb.d"
+  tags:
+    - app_directory
+
+- name: Install configuration files
+  become: true
+  copy:
+    src : "{{ item }}"
+    dest: /data/apps/{{ app_name }}/config
+    owner: root
+    group: docker
+    mode: 0664
+  with_items:
+    - config/
+  tags:
+    - app_config
+
+- name: Install env template
+  become: true
+  copy:
+    src: env/env{{ app_name }}.template
+    dest: /data/apps/{{ app_name }}/env/env{{ app_name }}.template
+    owner: root
+    group: docker
+    mode: 0644
+  tags:
+    - env_template
+
+- name: Install database initialization files
+  become: true
+  copy:
+    src : "{{ item }}"
+    dest : "/data/apps/{{ app_name }}/initdb.d"
+    owner: root
+    group: docker
+    mode: 0644
+  with_items:
+    - initdb.d/
+  tags:
+    - db_schema
+
+- name: Install docker-compose file
+  become: true
+  template:
+    src: docker-compose.yml
+    dest: /data/apps/{{ app_name }}/docker-compose.yml
+    owner: root
+    group: docker
+    mode: 0664
+  tags:
+    - deploy
+
+- name: Deploy stack {{ app_name }} {{ app_version }}
+  command: docker compose -f /data/apps/{{ app_name }}/docker-compose.yml up --detach
+  tags:
+    - deploy

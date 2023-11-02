@@ -1,0 +1,45 @@
+version: '3.7'
+
+networks:
+  default:  
+    external: true
+    name: sbdinet
+
+services:
+
+  mysqldb:
+    image: mysql:8.0
+    container_name: "{{ app_name }}-mysqldb"
+    environment:
+      - LANG=C.UTF-8
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - db_data_mysql_{{ app_name }}:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  mongodb:
+    image: mongo:6.0
+    container_name: "{{ app_name }}-mongodb"
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - /data/apps/{{ app_name }}/initdb.d/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:z
+      - db_data_mongo_{{ app_name }}:/data/db
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    container_name: "{{ app_name }}-casserver"
+    depends_on:
+      - mysqldb
+      - mongodb
+    environment:
+      JAVA_OPTS: -Xmx2g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    volumes:
+      - /data/apps/{{ app_name }}/config/application.yml:/tmp/application.yml
+      - /data/apps/{{ app_name }}/config/pwe.properties:/tmp/pwe.properties
+      - /data/apps/{{ app_name }}/config/log4j2.xml:/data/cas/config/log4j2.xml
+    command: dockerize -wait tcp://{{ app_name }}-mysqldb:3306 -timeout 60s -wait tcp://{{ app_name }}-mongodb:27017 -timeout 60s -template /tmp/application.yml:/data/cas/config/application.yml -template /tmp/pwe.properties:/data/cas/config/pwe.properties java -Dcas.standalone.configurationDirectory=/data/cas/config -Dala.password.properties=/data/cas/config/pwe.properties -jar /app/cas-exec.war
+
+volumes:
+  db_data_mysql_{{ app_name }}:
+  db_data_mongo_{{ app_name }}:

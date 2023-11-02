@@ -2,6 +2,8 @@
   vars:
     app_hosts:
       apikey: ext_server
+      userdetails: ext_server
+      ala-cas-5: ext_server
   vars_prompt:
   - name: app_name
     prompt: App name

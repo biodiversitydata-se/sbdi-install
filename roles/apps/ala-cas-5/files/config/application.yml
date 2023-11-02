@@ -1,0 +1,241 @@
+info:
+  description: ALA CAS Configuration
+server:
+  port: 9000
+  session:
+    timeout: 86400  # seconds, 24 hours
+  ssl:
+    enabled: false
+    key-store: 
+  forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+      port-header: x-forwarded-port
+      remote-ip-header: x-forwarded-for
+      protocol-header-https-value: https
+jndi:
+  hikari:
+    jdbccas:
+      driverClass: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://ala-cas-5-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&logger=Slf4JLogger&gatherPerfMetrics=true&logSlowQueries=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true&nullNamePatternMatchesAll=true&noAccessToProcedureBodies=true&useSSL=false&allowPublicKeyRetrieval=true
+      user: {{ .Env.MYSQL_USER }}
+      password: {{ .Env.MYSQL_PASSWORD }}
+      dataSourceProperties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+
+logging:
+  config: "file:/data/cas/config/log4j2.xml"
+
+cas:
+  server:
+    name: https://auth.biodiversitydata.se
+    prefix: ${cas.server.name}/cas
+  host:
+    name: auth.biodiversitydata.se
+  http-web-request:
+    cors:
+      enabled: true
+      #allow-origin-patterns:
+      allow-origins:
+        - '*'
+  jdbc:
+    showSql: false
+  audit:
+    mongo:
+      #sslEnabled: false
+      clientUri: mongodb://{{ .Env.CAS_AUDIT_USERNAME }}:{{ .Env.CAS_AUDIT_PASSWORD }}@ala-cas-5-mongodb:27017/cas-audit-repository
+      #host: localhost
+      #port: 27017
+      #replicaSet:
+      databaseName: cas-audit-repository
+      #authenticationDatabaseName: cas-audit-repository
+      #userId: cas
+      #password: cas
+      timeout: PT10S
+  authn:
+    attribute-repository:
+      core:
+        default-attributes-to-release: []
+    throttle:
+      failure:
+        range-seconds: 30
+        threshold: 3
+    pac4j:
+      core:
+        typedIdUsed: true
+      #facebook:
+      #  id:
+      #  secret:
+      #  scope:
+      #twitter:
+      #  id:
+      #  secret:
+      google:
+        scope: EMAIL_AND_PROFILE
+        id: {{ .Env.GOOGLE_ID }}
+        secret: {{ .Env.GOOGLE_SECRET }}
+      github:
+        id: {{ .Env.GITHUB_ID }}
+        secret: {{ .Env.GITHUB_SECRET }}
+      #linkedin:
+      #  id:
+      #  secret:
+      #windows:
+      #  id:
+      #  secret:
+      #yahoo:
+      #  id:
+      #  secret:
+      #oidc:
+      #- generic:
+      #    client-name: aaf
+      #    discovery-uri:
+      #    id:
+      #    secret:
+      #    scope: openid profile email
+      #    cssClass: aaf-logo
+    oauth:
+      core:
+        userProfileViewType: FLAT
+      crypto:
+        encryption:
+          key: {{ .Env.OAUTH_CRYPTO_ENCRYPTION_KEY }}
+        signing:
+          key: {{ .Env.OAUTH_CRYPTO_SIGNING_KEY }}
+      access-token:
+        crypto:
+          encryption:
+            key: {{ .Env.OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY }}
+          signing:
+            key: {{ .Env.OAUTH_ACCESS_TOKEN_SIGNING_KEY }}
+    oidc:
+      core:
+        issuer: ${cas.server.name}/cas/oidc
+      jwks:
+        file-system:
+          jwks-file: file:/data/cas/keystore.jwks
+  monitor:
+    endpoints:
+    jdbc:
+      validationQuery: /* ping */ SELECT 1
+      dataSourceName: java:comp/env/jdbccas
+  service-registry:
+    core:
+      init-from-json: false
+    mongo:
+      #sslEnabled: false
+      clientUri: mongodb://{{ .Env.CAS_SERVICE_USERNAME }}:{{ .Env.CAS_SERVICE_PASSWORD }}@ala-cas-5-mongodb:27017/cas-service-registry
+      #host: localhost
+      #port: 27017
+      #replicaSet:
+      collection: services
+      #databaseName: cas-service-registry
+      #authenticationDatabaseName: cas-service-registry
+      #userId: services
+      #password: services
+      timeout: PT10S
+  ticket:
+    tgt:
+      primary:
+        maxTimeToLiveInSeconds: 86400
+        timeToKillInSeconds: 86400
+      rememberMe:
+        enabled: true
+        timeToKillInSeconds: 7884000
+    registry:
+      cleaner:
+        schedule:
+          enabled: true
+      mongo:
+        update-indexes: true
+        drop-indexes: false
+        #sslEnabled: false
+        clientUri: mongodb://{{ .Env.CAS_TICKET_USERNAME }}:{{ .Env.CAS_TICKET_PASSWORD }}@ala-cas-5-mongodb:27017/cas-ticket-registry
+        #host: mongodbcas
+        #port: 27017
+        #replicaSet:
+        #databaseName: cas-ticket-registry
+        #authenticationDatabaseName: cas-ticket-registry
+        #userId: tickets
+        #password: tickets
+        timeout: PT15S
+    st:
+      timeToKillInSeconds: 15
+  tgc:
+    maxAge: 86400 # Same as TGT expiry
+    rememberMeMaxAge: PT7884000S
+    crypto:
+      enabled: false
+  webflow:
+    crypto:
+      signing:
+        key: {{ .Env.WEBFLOW_CRYPTO_SIGNING_KEY }}
+      encryption:
+        key: {{ .Env.WEBFLOW_CRYPTO_ENCRYPTION_KEY }}
+
+ala:
+  userDetailsBaseUrl: https://auth.biodiversitydata.se/userdetails/
+  cookie:
+    domain: biodiversitydata.se
+    secure: false
+    httpOnly: true
+    maxAge: -1
+    name: ALA-Auth
+    path: /
+    sameSitePolicy: lax
+  userCreator:
+    defaultCountry: SE
+    userCreatePassword: {{ .Env.USER_CREATE_PASSWORD }}
+    enableUserSurvey: false
+    jdbc:
+      dataSourceName: java:comp/env/jdbccas
+      enableUpdateLastLoginTime: true
+      enableRequestExtraAttributes: true
+      enableUpdateLegacyPasswords: true
+  skin:
+    baseUrl: https://tools.biodiversitydata.se
+    termsUrl: https://docs.biodiversitydata.se/sbdi-data/sbdi-atlas-terms-of-use/
+    uiVersion: 2
+    headerFooterUrl: https://static.biodiversitydata.se/
+    favIconBaseUrl: https://static.biodiversitydata.se/
+    bieBaseUrl: https://species.biodiversitydata.se
+    bieSearchPath: /search
+    userDetailsUrl: https://auth.biodiversitydata.se/userdetails/
+    orgShortName: SBDI
+    orgLongName: Swedish Biodiversity Data Infrastructure
+    orgNameKey: sbdi
+    loginLogo: https://biodiversitydata.se/wp-content/uploads/2021/02/sbdi-logo-orginal-large.png
+
+# Enable these for Spring Boot actuator (required for Spring Boot Admin client)
+
+endpoints:
+  enabled: true
+security:
+  user:
+    name: admin
+    password: {{ .Env.SECURITY_USER_PASSWORD }}
+    role:
+      - ACTUATOR
+  basic:
+    enabled: true
+    authorizeMode: role
+    realm: ALA CAS
+    path:
+      - /status/**
+management:
+  security:
+    enabled: true
+    roles: ACTUATOR
+
+spring:
+  flyway:
+    baselineOnMigrate: true
+    url: jdbc:mysql://ala-cas-5-mysqldb:3306/{{ .Env.MYSQL_DATABASE }}?serverTimezone=Europe/Stockholm&zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&nullCatalogMeansCurrent=true&nullNamePatternMatchesAll=true&noAccessToProcedureBodies=true&useSSL=false&allowPublicKeyRetrieval=true
+    user: {{ .Env.MYSQL_USER }}
+    password: {{ .Env.MYSQL_PASSWORD }}
+  session:
+    enabled: false
+    store-type: none
