@@ -17,7 +17,7 @@ echo
 echo "== cas, date: $TODAY"
 echo "- dump: $(date)"
 ssh -T live-ext-1 <<'EOL'
-docker exec mysqldbcas /bin/bash -c 'mysqldump -u root -p$MYSQL_ROOT_PASSWORD emmet' > /tmp/emmet-dump.sql
+docker exec ala-cas-5-mysqldb /bin/bash -c 'mysqldump -u root -p$MYSQL_ROOT_PASSWORD emmet' > /tmp/emmet-dump.sql
 EOL
 echo "- rsync: $(date)"
 rsync -a live-ext-1:/tmp/emmet-dump.sql /backup/data/cas/emmet-dump__${TODAY}.sql
@@ -34,11 +34,11 @@ rsync -a live-ext-1:/tmp/matomo-dump.sql /backup/data/matomo/matomo-dump__${TODA
 echo "- done: $(date)"
 echo
 
-echo "== mongocbcas, date: $TODAY"
+echo "== mongodbcas, date: $TODAY"
 echo "- dump: $(date)"
 ssh -T live-ext-1 <<'EOL'
-docker exec mongodbcas /bin/bash -c 'mongodump -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase=$MONGO_INITDB_DATABASE --out=/tmp/mongodbcas_dump'
-docker cp mongodbcas:/tmp/mongodbcas_dump /tmp
+docker exec ala-cas-5-mongodb /bin/bash -c 'mongodump -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase=$MONGO_INITDB_DATABASE --out=/tmp/mongodbcas_dump'
+docker cp ala-cas-5-mongodb:/tmp/mongodbcas_dump /tmp
 EOL
 echo "- rsync: $(date)"
 rsync -a live-ext-1:/tmp/mongodbcas_dump/ /backup/data/cas/mongodbcas-dump__${TODAY}
