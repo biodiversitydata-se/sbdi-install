@@ -105,3 +105,9 @@ elasticsearch:
     - host: "elasticsearch-image-service"
       scheme: "http"
       port: 9200
+
+openapi:
+  terms: https://docs.biodiversitydata.se/sbdi-data/sbdi-atlas-terms-of-use/
+  contact:
+    name:
+    email:
