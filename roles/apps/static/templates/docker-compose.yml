@@ -1,0 +1,12 @@
+version: '3.8'
+
+networks:
+  basnet:
+    external: true
+
+services:
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/base-branding:{{ app_version }}
+    networks:
+      - basnet
