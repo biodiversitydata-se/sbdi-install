@@ -30,7 +30,6 @@
     - log
     - data
     - data/
-    - data/api
     - data/apikey
     - data/cas
     - data/bie-service

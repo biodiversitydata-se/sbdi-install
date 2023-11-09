@@ -11,7 +11,6 @@ find /backup/log/nightly__*.log -type f -mtime +$KEEP_DAYS -exec rm {} \;
 # Directories
 echo "- directories: $(date)"
 DIR_PATTERNS=(
-    api/db_data_apiservice__*
     collectory/db_data_collectory__*
     image-service/db_data_image-service__*
     logger/db_data_logger__*

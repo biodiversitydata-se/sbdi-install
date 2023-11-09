@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # live-manager-1
-/backup/bin/backup-docker_nfs-db.sh api db_data_apiservice
 /backup/bin/backup-docker_nfs-db.sh collectory db_data_collectory
 /backup/bin/backup-docker_nfs-db.sh image-service db_data_image-service
 /backup/bin/backup-docker_nfs-db.sh logger db_data_logger
