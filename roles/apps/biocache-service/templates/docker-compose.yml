@@ -1,0 +1,28 @@
+version: '3.8'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_{{ app_name }}:
+    file: ./config/biocache-config.properties
+  config_{{ app_name }}_logger-client:
+    file: ./config/logger-client.properties
+
+services:
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    environment:
+      JAVA_OPTS: -Xmx8g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    configs:
+      - source: config_{{ app_name }}
+        target: /tmp/biocache-config.properties
+      - source: config_{{ app_name }}_logger-client
+        target: /data/logger-client/config/logger-client.properties
+    # TODO: wait for cassandra and solr?
+    command: dockerize -template /tmp/biocache-config.properties:/data/biocache/config/biocache-config.properties catalina.sh run
+    networks:
+      - basnet
