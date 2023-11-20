@@ -16,7 +16,7 @@ CONTAINER_ID="${HOST_AND_CONTAINER#*:}"
 echo "- dump from $HOST_NAME $CONTAINER_ID: $(date)"
 ssh $HOST_NAME 'touch .hushlogin'
 ssh -T $HOST_NAME <<EOL
-docker exec $CONTAINER_ID /bin/bash -c 'pg_dump -U $DB_NAME $DB_USER' > /tmp/$DB_NAME-dump.sql
+docker exec $CONTAINER_ID /bin/bash -c 'pg_dump -U $DB_USER $DB_NAME' > /tmp/$DB_NAME-dump.sql
 EOL
 ssh $HOST_NAME 'rm .hushlogin'
 
