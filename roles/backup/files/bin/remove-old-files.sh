@@ -33,6 +33,14 @@ done
 # Files
 echo "- files: $(date)"
 FILE_PATTERNS=(
+    collectory/collectory-dump__*.sql
+    image-service/images-dump__*.sql
+    logger/logger-dump__*.sql
+    spatial-service/layersdb-dump__*.sql
+    specieslists/specieslists-dump__*.sql
+    wordpress_main/wordpress-dump__*.sql
+    wordpress_docs/wordpress-dump__*.sql
+    wordpress_tools/wordpress-dump__*.sql
     apikey/apikey-dump__*.sql
     cas/emmet-dump__*.sql
     matomo/matomo-dump__*.sql
