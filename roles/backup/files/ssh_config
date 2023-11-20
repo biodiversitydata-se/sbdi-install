@@ -9,3 +9,35 @@ Host live-ext-1
 Host live-molecular-1
     HostName 192.121.208.234
     User ubuntu
+
+Host live-cassandra-1
+    ProxyJump live-manager-1
+    User ubuntu
+
+Host live-cassandra-2
+    ProxyJump live-manager-1
+    User ubuntu
+
+Host live-cassandra-3
+    ProxyJump live-manager-1
+    User ubuntu
+
+Host live-cassandra-4
+    ProxyJump live-manager-1
+    User ubuntu
+
+Host live-solr-1
+    ProxyJump live-manager-1
+    User ubuntu
+
+Host live-solr-2
+    ProxyJump live-manager-1
+    User ubuntu
+
+Host live-solr-3
+    ProxyJump live-manager-1
+    User ubuntu
+
+Host live-solr-4
+    ProxyJump live-manager-1
+    User ubuntu
