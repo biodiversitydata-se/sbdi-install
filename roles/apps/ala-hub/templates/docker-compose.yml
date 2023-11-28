@@ -1,0 +1,24 @@
+version: '3.8'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_{{ app_name }}:
+    file: ./config/{{ app_name }}-config.properties
+
+services:
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    environment:
+      JAVA_OPTS: -Xmx4g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    configs:
+      - source: config_{{ app_name }}
+        target: /tmp/{{ app_name }}-config.properties
+    command: dockerize -template /tmp/{{ app_name }}-config.properties:/data/{{ app_name }}/config/{{ app_name }}-config.properties catalina.sh run
+    networks:
+      - basnet
+

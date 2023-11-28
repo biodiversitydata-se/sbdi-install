@@ -1,0 +1,68 @@
+version: '3.8'
+
+networks:
+  basnet:
+    external: true
+
+configs:
+  config_{{ app_name }}:
+    file: ./config/biocache-config.properties
+  config_{{ app_name }}_logger-client:
+    file: ./config/logger-client.properties
+
+services:
+
+  cassandra-{{ app_name }}:
+    image: cassandra:3.11
+    environment:
+      - TZ=Europe/Stockholm
+      - MAX_HEAP_SIZE=4g
+      - HEAP_NEWSIZE=800m
+    volumes:
+      - db_data_{{ app_name }}:/var/lib/cassandra
+    networks:
+      - basnet
+
+  solr-{{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
+    environment:
+      TZ: Europe/Stockholm
+      SOLR_HEAP: 4g
+      SOLR_OPTS: "-Dlog4j2.formatMsgNoLookups=true"
+      SOLR_PORT: "8983"
+      SOLR_HOST: "solr-{{ app_name }}"
+      ZOO_PORT: "9983"
+      ZOO_HOST: "solr-{{ app_name }}"
+    ports:
+      - "8983:8983"
+    volumes:
+      - data_{{ app_name }}_solr:/var/solr
+    networks:
+      - basnet
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == live-manager-1
+
+  {{ app_name }}:
+    image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
+    environment:
+      JAVA_OPTS: -Xmx8g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    env_file: "/data/apps/{{ app_name }}/env/.env{{ app_name }}"
+    configs:
+      - source: config_{{ app_name }}
+        target: /tmp/biocache-config.properties
+      - source: config_{{ app_name }}_logger-client
+        target: /data/logger-client/config/logger-client.properties
+    command: dockerize -wait tcp://cassandra-{{ app_name }}:9042 -timeout 60s -wait tcp://solr-{{ app_name }}:9983 -timeout 60s -wait tcp://solr-{{ app_name }}:8983 -timeout 60s -template /tmp/biocache-config.properties:/data/biocache/config/biocache-config.properties catalina.sh run
+    networks:
+      - basnet
+
+volumes:
+  db_data_{{ app_name }}:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/db_data_{{ app_name }}"
+  data_{{ app_name }}_solr:
