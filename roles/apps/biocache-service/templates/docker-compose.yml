@@ -12,6 +12,15 @@ configs:
 
 services:
 
+  cassandra-{{ app_name }}:
+    image: cassandra:3.11
+    environment:
+      - MAX_HEAP_SIZE=4g
+    ports:
+      - "9042:9042"
+    volumes:
+      - db_data_{{ app_name }}:/var/lib/cassandra
+
   {{ app_name }}:
     image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
     environment:
@@ -22,7 +31,16 @@ services:
         target: /tmp/biocache-config.properties
       - source: config_{{ app_name }}_logger-client
         target: /data/logger-client/config/logger-client.properties
-    # TODO: wait for cassandra and solr?
-    command: dockerize -template /tmp/biocache-config.properties:/data/biocache/config/biocache-config.properties catalina.sh run
+    # TODO: wait for solr?
+    command: dockerize -wait tcp://cassandra-{{ app_name }}:9042 -timeout 60s -template /tmp/biocache-config.properties:/data/biocache/config/biocache-config.properties catalina.sh run
     networks:
       - basnet
+
+volumes:
+  db_data_{{ app_name }}:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/db_data_{{ app_name }}"
+
