@@ -1,117 +1,119 @@
 version: '3.8'
 
 networks:
-  mats:
+  basnet:
     external: true
 
 services:
 
-  zookeeper1:
+  zookeeper-1:
     image: zookeeper:3.9
     environment:
       ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
+      #ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181
       ZOO_4LW_COMMANDS_WHITELIST: "*"
     networks:
-      - mats
-    ports:
-      - "2181:2181"
+      - basnet
     volumes:
       - data_zookeeper1:/data
       - data_zookeeperlog1:/datalog
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == live-manager-1
 
-  zookeeper2:
-    image: zookeeper:3.9
-    environment:
-      ZOO_MY_ID: 2
-      ZOO_SERVERS: server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
-      ZOO_4LW_COMMANDS_WHITELIST: "*"
-    networks:
-      - mats
-    ports:
-      - "2182:2181"
-    volumes:
-      - data_zookeeper2:/data
-      - data_zookeeperlog2:/datalog
+  #zookeeper-2:
+  #  image: zookeeper:3.9
+  #  environment:
+  #    ZOO_MY_ID: 2
+  #    ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+  #    ZOO_4LW_COMMANDS_WHITELIST: "*"
+  #  networks:
+  #    - basnet
+  #  ports:
+  #    - "2182:2181"
+  #  volumes:
+  #    - data_zookeeper2:/data
+  #    - data_zookeeperlog2:/datalog
 
-  zookeeper3:
-    image: zookeeper:3.9
-    environment:
-      ZOO_MY_ID: 3
-      ZOO_SERVERS: server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
-      ZOO_4LW_COMMANDS_WHITELIST: "*"
-    networks:
-      - mats
-    ports:
-      - "2183:2181"
-    volumes:
-      - data_zookeeper3:/data
-      - data_zookeeperlog3:/datalog
+  #zookeeper-3:
+  #  image: zookeeper:3.9
+  #  environment:
+  #    ZOO_MY_ID: 3
+  #    ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+  #    ZOO_4LW_COMMANDS_WHITELIST: "*"
+  #  networks:
+  #    - basnet
+  #  ports:
+  #    - "2183:2181"
+  #  volumes:
+  #    - data_zookeeper3:/data
+  #    - data_zookeeperlog3:/datalog
 
-  solr1:
+  solr-1:
     image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
     environment:
-      ZK_HOST: zookeeper1:2181,zookeeper2:2182,zookeeper3:2183
+      #ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
+      ZK_HOST: zookeeper-1:2181
       SOLR_HEAP: 2g
-      SOLR_HOST: solr1
+      SOLR_HOST: solr-1
       SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
     volumes:
-      - data_solr1:/opt/solr
+      - data_solr1:/var/solr
     networks:
-      - mats
-    ports:
-      - "8983:8983"
-
-  solr2:
-    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
-    environment:
-      ZK_HOST: zookeeper1:2181,zookeeper2:2182,zookeeper3:2183
-      SOLR_HEAP: 2g
-      SOLR_HOST: solr2
-      SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-    volumes:
-      - data_solr2:/opt/solr
-    networks:
-      - mats
+      - basnet
     ports:
       - "8984:8983"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == live-manager-1
 
-  solr3:
-    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
-    environment:
-      ZK_HOST: zookeeper1:2181,zookeeper2:2182,zookeeper3:2183
-      SOLR_HEAP: 2g
-      SOLR_HOST: solr3
-      SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-    volumes:
-      - data_solr3:/opt/solr
-    networks:
-      - mats
-    ports:
-      - "8985:8983"
+  #solr-2:
+  #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
+  #  environment:
+  #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
+  #    SOLR_HEAP: 2g
+  #    SOLR_HOST: solr-2
+  #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
+  #  volumes:
+  #    - data_solr2:/var/solr
+  #  networks:
+  #    - basnet
 
-  solr4:
-    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
-    environment:
-      ZK_HOST: zookeeper1:2181,zookeeper2:2182,zookeeper3:2183
-      SOLR_HEAP: 2g
-      SOLR_HOST: solr4
-      SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-    volumes:
-      - data_solr4:/opt/solr
-    networks:
-      - mats
-    ports:
-      - "8986:8983"
+  #solr-3:
+  #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
+  #  environment:
+  #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
+  #    SOLR_HEAP: 2g
+  #    SOLR_HOST: solr-3
+  #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
+  #  volumes:
+  #    - data_solr3:/var/solr
+  #  networks:
+  #    - basnet
+
+  #solr-4:
+  #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
+  #  environment:
+  #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
+  #    SOLR_HEAP: 2g
+  #    SOLR_HOST: solr-4
+  #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
+  #  volumes:
+  #    - data_solr4:/var/solr
+  #  networks:
+  #    - basnet
 
 volumes:
   data_zookeeper1:
-  data_zookeeper2:
-  data_zookeeper3:
+  #data_zookeeper2:
+  #data_zookeeper3:
   data_zookeeperlog1:
-  data_zookeeperlog2:
-  data_zookeeperlog3:
+  #data_zookeeperlog2:
+  #data_zookeeperlog3:
   data_solr1:
-  data_solr2:
-  data_solr3:
-  data_solr4:
+  #data_solr2:
+  #data_solr3:
+  #data_solr4:
