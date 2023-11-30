@@ -25,17 +25,15 @@
   tags:
     - app_config
 
-- name: Remove config.zip
-  become: true
-  file:
-    state: absent
-    path: /data/apps/{{ app_name }}/config.zip  
-  tags:
-    - app_config
-
 - name: Zip configuration files
   become: true
-  command: zip -r -j /data/apps/{{ app_name }}/config.zip /data/apps/{{ app_name }}/config
+  archive:
+    path: /data/apps/{{ app_name }}/config/
+    dest: /data/apps/{{ app_name }}/config.zip
+    format: zip
+    owner: root
+    group: docker
+    mode: 0664
   tags:
     - app_config
 
@@ -50,7 +48,8 @@
   tags:
     - deploy
 
-#- name: Deploy stack {{ app_name }}
-#  command: docker stack deploy -c /data/apps/{{ app_name }}/docker-compose.yml {{ app_name }}2
-#  tags:
-#    - deploy
+- name: Deploy stack {{ app_name }}
+  command: docker stack deploy -c /data/apps/{{ app_name }}/docker-compose.yml {{ app_name }}2
+  tags:
+    - deploy
+    - deploy_service
