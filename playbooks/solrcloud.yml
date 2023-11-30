@@ -1,0 +1,35 @@
+- name: Install solrcloud configset and create collection
+  hosts: swarm_managers[0]
+  tasks:
+
+    - name: Delete existing collection
+      tags:
+        - delete
+        - delete_collection
+      uri:
+        url: http://localhost:8984/solr/admin/collections?action=DELETE&name=biocache
+
+    - name: Delete existing configset
+      tags:
+        - delete
+        - delete_configset
+      uri:
+        url: http://localhost:8984/solr/admin/configs?action=DELETE&name=biocache&omitHeader=true
+
+    - name: Create configset
+      tags:
+        - create
+        - create_configset
+      uri:
+        url: http://localhost:8984/solr/admin/configs?action=UPLOAD&name=biocache
+        method: POST
+        headers:
+          Content-Type: application/octet-stream
+        src: /data/apps/solrcloud/config.zip
+
+    - name: Create collection
+      tags:
+        - create
+        - create_collection
+      uri:
+        url: http://localhost:8984/solr/admin/collections?action=CREATE&name=biocache&numShards=1&replicationFactor=1&maxShardsPerNode=1&collection.configName=biocache
