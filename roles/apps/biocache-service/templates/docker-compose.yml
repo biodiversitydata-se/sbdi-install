@@ -23,27 +23,6 @@ services:
     networks:
       - basnet
 
-  solr-{{ app_name }}:
-    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
-    environment:
-      TZ: Europe/Stockholm
-      SOLR_HEAP: 4g
-      SOLR_OPTS: "-Dlog4j2.formatMsgNoLookups=true"
-      SOLR_PORT: "8983"
-      SOLR_HOST: "solr-{{ app_name }}"
-      ZOO_PORT: "9983"
-      ZOO_HOST: "solr-{{ app_name }}"
-    ports:
-      - "8983:8983"
-    volumes:
-      - data_{{ app_name }}_solr:/var/solr
-    networks:
-      - basnet
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == live-manager-1
-
   {{ app_name }}:
     image: ghcr.io/biodiversitydata-se/{{ app_name }}:{{ app_version }}
     environment:
@@ -54,7 +33,7 @@ services:
         target: /tmp/biocache-config.properties
       - source: config_{{ app_name }}_logger-client
         target: /data/logger-client/config/logger-client.properties
-    command: dockerize -wait tcp://cassandra-{{ app_name }}:9042 -timeout 60s -wait tcp://solr-{{ app_name }}:9983 -timeout 60s -wait tcp://solr-{{ app_name }}:8983 -timeout 60s -template /tmp/biocache-config.properties:/data/biocache/config/biocache-config.properties catalina.sh run
+    command: dockerize -wait tcp://cassandra-{{ app_name }}:9042 -timeout 60s -template /tmp/biocache-config.properties:/data/biocache/config/biocache-config.properties catalina.sh run
     networks:
       - basnet
 
@@ -65,4 +44,3 @@ volumes:
       type: none
       o: bind
       device: "/docker_nfs/var/volumes/db_data_{{ app_name }}"
-  data_{{ app_name }}_solr:

@@ -14,3 +14,8 @@ Full deploy - create app directories, deploy config files and deploy the docker 
 ```
 ansible-playbook -i inventories/prod playbooks/apps.yml --ask-become-pass
 ```
+
+Full deploy - but do not start the service (doesn't work for all apps - check tags in main.yml for the app):
+```
+ansible-playbook -i inventories/prod playbooks/apps.yml --ask-become-pass --skip-tags deploy_service
+```

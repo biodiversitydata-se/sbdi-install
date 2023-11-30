@@ -9,31 +9,33 @@
   with_items:
     - "{{ app_name }}"
     - "{{ app_name }}/config"
-    - "{{ app_name }}/env"
   tags:
     - app_directory
 
 - name: Install configuration files
   become: true
   copy:
-    src: config/
+    src : "{{ item }}"
     dest: /data/apps/{{ app_name }}/config
+    owner: root
+    group: docker
+    mode: 0664
+  with_items:
+    - config/
+  tags:
+    - app_config
+
+- name: Zip configuration files
+  become: true
+  archive:
+    path: /data/apps/{{ app_name }}/config/
+    dest: /data/apps/{{ app_name }}/config.zip
+    format: zip
     owner: root
     group: docker
     mode: 0664
   tags:
     - app_config
-
-- name: Install env template
-  become: true
-  copy:
-    src: env/env{{ app_name }}.template
-    dest: /data/apps/{{ app_name }}/env/env{{ app_name }}.template
-    owner: root
-    group: docker
-    mode: 0644
-  tags:
-    - env_template
 
 - name: Install docker-compose file
   become: true
@@ -46,8 +48,8 @@
   tags:
     - deploy
 
-- name: Deploy stack {{ app_name }} {{ app_version }}
-  command: docker stack deploy -c /data/apps/{{ app_name }}/docker-compose.yml {{ app_name }}
+- name: Deploy stack {{ app_name }}
+  command: docker stack deploy -c /data/apps/{{ app_name }}/docker-compose.yml {{ app_name }}2
   tags:
     - deploy
     - deploy_service
