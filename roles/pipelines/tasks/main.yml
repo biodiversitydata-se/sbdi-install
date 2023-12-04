@@ -1,0 +1,51 @@
+- name: Install aptitude using apt
+  apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+  tags:
+    - pipelines
+
+- name: Install required system packages
+  apt: name={{ item }} state=latest update_cache=yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools', 'unzip']
+  tags:
+    - pipelines
+
+- name: Create pipelines working directories
+  file: path={{ item }} state=directory owner={{ spark_user }} group={{ spark_user }} recurse=true
+  with_items:
+    - "{{ data_dir }}/la-pipelines/config"
+    - "{{ data_dir }}/spark-tmp"
+    - "{{ data_dir }}/spark/conf"
+    - "{{ data_dir }}/pipelines-shp"
+    - "{{ data_dir }}/dwca-tmp"
+    - "{{ data_dir }}/dwca-export"
+    - "{{ data_dir }}/migration"
+  tags:
+    - pipelines-config
+    - pipelines
+
+# yq is needed by the la-pipelines script
+
+- name: Download yq
+  get_url:
+    url: "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+    dest: "/usr/bin/yq"
+    mode: '0755'
+  vars:
+  tags:
+    - pipelines
+    - yq
+
+# docopts is needed by the la-pipelines script
+
+- name: Get docopts
+  shell: curl -o /usr/local/bin/docopts -LJO https://github.com/docopt/docopts/releases/download/v0.6.3-rc2/docopts_linux_amd64
+  when: is_arm is not defined
+  tags:
+    - pipelines
+    - docopts
+
+- name: Make docopts executable
+  shell: chmod +x /usr/local/bin/docopts
+  tags:
+    - pipelines
+    - docopts

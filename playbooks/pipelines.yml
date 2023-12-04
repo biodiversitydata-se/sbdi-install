@@ -1,8 +1,14 @@
-- name: Install pipelines
+- name: Install Java
   hosts: pipelines
   vars:
     use_temurin8: true
   roles:
     - ../roles/java
+
+- name: Install pipelines
+  become: true
+  hosts: pipelines
+  roles:
+    - ../roles/pipelines
 
 #ansible-playbook -i inventories/local playbooks/pipelines.yml --ask-become-pass
