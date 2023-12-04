@@ -1,0 +1,3 @@
+temurin_packages:
+  - adoptium-ca-certificates
+  - temurin-8-jdk
