@@ -1,9 +1,9 @@
 copy:
-  copyPath: /data/biocache-load
+  copyPath: {{ data_dir }}/biocache-load
 alaNameMatch:
   wsUrl: https://namematching.biodiversitydata.se/
 sds:
-  wsUrl: http://localhost:9189
+  wsUrl: http://ala-sensitive-data-service:9189
 collectory:
   wsUrl: https://collections.biodiversitydata.se/ws/
   httpHeaders:

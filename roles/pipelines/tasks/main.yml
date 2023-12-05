@@ -11,6 +11,36 @@
   tags:
     - pipelines
 
+- name: Add Docker GPG apt Key
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  tags:
+    - pipelines
+    - docker
+
+- name: Add Docker Repository
+  become: true
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+  tags:
+    - pipelines
+    - docker
+
+- name: Update apt and install docker-ce
+  become: true
+  apt: update_cache=yes name={{ item }} state=latest
+  with_items:
+    - docker-ce
+    - docker-ce-cli
+    - docker-compose
+    - containerd.io
+  tags:
+    - pipelines
+    - docker
+
 - name: Create pipelines working directories
   become: true
   file: path={{ item }} state=directory owner={{ spark_user }} group={{ spark_user }} recurse=true
@@ -26,6 +56,24 @@
   tags:
     - pipelines
     - pipelines-config
+
+- name: Update docker directory
+  become: true
+  template: src={{ item }} dest=/etc/docker/daemon.json
+  with_items:
+    - daemon.json
+  tags:
+    - pipelines
+    - docker
+
+- name: Restart docker
+  become: true
+  service:
+    name: docker
+    state: restarted
+  tags:
+    - pipelines
+    - docker
 
 # yq is needed by the la-pipelines script
 
@@ -71,6 +119,50 @@
   tags:
     - pipelines
     - pipelines-config
+
+- name: Copy docker YAML files to {{ data_dir }}
+  copy: src={{ item }} dest={{ data_dir }}/{{ item }}
+  with_items:
+    - ala-sensitive-data-service.yml
+  tags:
+    - pipelines
+    - pipelines-services
+  
+- name: Copy service scripts to /usr/bin
+  become: true
+  copy: src={{ item }} dest=/usr/bin/{{ item }} mode=777
+  with_items:
+    - ala-sensitive-data-service.sh
+  tags:
+    - pipelines
+    - pipelines-services
+
+- name: Copy docker service files to /etc/systemd/system
+  become: true
+  copy: src={{ item }} dest=/etc/systemd/system/{{ item }}
+  with_items:
+    - ala-sensitive-data-service.service
+  tags:
+    - pipelines
+    - pipelines-services
+
+#- name: Enable services
+#  become: true
+#  service: name={{ item }} enabled=yes
+#  with_items:
+#    - ala-sensitive-data-service
+#  tags:
+#    - pipelines
+#    - pipelines-services
+
+#- name: Start service ala-sensitive-data-service, if not running
+#  become: true
+#  service:
+#    name: ala-sensitive-data-service
+#    state: started
+#  tags:
+#    - pipelines
+#    - pipelines-services
 
 - name: Get Gbif API vocabularies
   run_once: true
