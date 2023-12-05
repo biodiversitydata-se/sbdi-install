@@ -1,15 +1,18 @@
 - name: Install aptitude using apt
+  become: true
   apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
   tags:
     - pipelines
 
 - name: Install required system packages
+  become: true
   apt: name={{ item }} state=latest update_cache=yes
   loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools', 'unzip']
   tags:
     - pipelines
 
 - name: Create pipelines working directories
+  become: true
   file: path={{ item }} state=directory owner={{ spark_user }} group={{ spark_user }} recurse=true
   with_items:
     - "{{ data_dir }}/la-pipelines/config"
@@ -19,13 +22,15 @@
     - "{{ data_dir }}/dwca-tmp"
     - "{{ data_dir }}/dwca-export"
     - "{{ data_dir }}/migration"
+    - "{{ data_dir }}/pipelines-vocabularies"
   tags:
-    - pipelines-config
     - pipelines
+    - pipelines-config
 
 # yq is needed by the la-pipelines script
 
 - name: Download yq
+  become: true
   get_url:
     url: "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
     dest: "/usr/bin/yq"
@@ -38,6 +43,7 @@
 # docopts is needed by the la-pipelines script
 
 - name: Get docopts
+  become: true
   shell: curl -o /usr/local/bin/docopts -LJO https://github.com/docopt/docopts/releases/download/v0.6.3-rc2/docopts_linux_amd64
   when: is_arm is not defined
   tags:
@@ -45,7 +51,68 @@
     - docopts
 
 - name: Make docopts executable
+  become: true
   shell: chmod +x /usr/local/bin/docopts
   tags:
     - pipelines
     - docopts
+
+#- name: Update apt and install pipelines
+#  apt: update_cache=yes name=la-pipelines={{ pipelines_version }} force=yes
+#  tags:
+#    - pipelines
+#    - la-pipelines
+#    - la-pipelines-apt
+#    - apt
+
+#livingatlas/pipelines/target/la-pipelines.jar usr/share/la-pipelines/
+#livingatlas/scripts/la-pipelines usr/bin
+#livingatlas/scripts/logging_lib.sh usr/share/la-pipelines/
+##livingatlas/pipelines/target/la-pipelines usr/share/bash-completion/completions/
+##livingatlas/pipelines/src/main/resources/log4j-colorized.properties data/la-pipelines/config
+##livingatlas/pipelines/src/main/resources/log4j.properties data/la-pipelines/config
+##livingatlas/configs/la-pipelines.yaml data/la-pipelines/config
+##livingatlas/pipelines/target/la-pipelines-local.yaml.sample data/la-pipelines/config
+##livingatlas/pipelines/src/main/resources/logback.xml data/la-pipelines/config
+
+- name: Install pipelines config
+  template: src={{ item }} dest={{ data_dir }}/la-pipelines/config/{{ item }} mode=0644 output_encoding=iso-8859-1
+  with_items:
+    - la-pipelines-local.yaml
+  tags:
+    - pipelines
+    - pipelines-config
+
+- name: Get Gbif API vocabularies
+  run_once: true
+  uri:
+    url: "http://api.gbif.org/v1/vocabularies/{{ item }}/releases/latest/export"
+    dest: /data/pipelines-vocabularies/{{ item }}.json
+  with_items:
+    - LifeStage
+    - DegreeOfEstablishment
+    - EstablishmentMeans
+    - Pathway
+  tags:
+    - pipelines
+    - pipelines-vocabularies
+
+- name: Copy states file
+  copy: src={{ item }} dest={{ data_dir }}/la-pipelines/config/{{ item }} mode=0644
+  with_items:
+    - stateProvinces.tsv
+  tags:
+    - pipelines
+    - pipelines-states
+
+- name: Copy and unpack SHP files (includes global layer and EEZ derived from GBIFs geocode DB)
+  unarchive:
+    src: "{{ item }}"
+    dest: "{{ data_dir }}/pipelines-shp"
+    owner: "{{ spark_user }}"
+    group: "{{ spark_user }}"
+  with_items:
+    - pipelines-shp.zip
+  tags:
+    - pipelines
+    - pipelines-layers

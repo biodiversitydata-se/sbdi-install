@@ -6,7 +6,6 @@
     - ../roles/java
 
 - name: Install pipelines
-  become: true
   hosts: pipelines
   roles:
     - ../roles/pipelines
