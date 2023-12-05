@@ -7,5 +7,3 @@
   hosts: pipelines
   roles:
     - ../roles/pipelines
-
-#ansible-playbook -i inventories/local playbooks/pipelines.yml --ask-become-pass
