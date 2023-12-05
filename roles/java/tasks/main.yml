@@ -1,8 +1,0 @@
-- name: "Show java version"
-  debug:
-    msg: "Using java versions: java8={{ use_temurin8 | default(false) }} java11={{ use_temurin11 | default(false) }}'"
-  tags:
-    - java
-
-- import_tasks: temurin.yml
-  when: use_temurin8 is defined and use_temurin8 | bool == True

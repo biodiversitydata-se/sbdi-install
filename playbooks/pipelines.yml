@@ -1,9 +1,7 @@
-- name: Install Java
+- name: Set up la-apt
   hosts: pipelines
-  vars:
-    use_temurin8: true
   roles:
-    - ../roles/java
+    - ../roles/la-apt
 
 - name: Install pipelines
   hosts: pipelines

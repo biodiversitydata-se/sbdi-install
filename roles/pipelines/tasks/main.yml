@@ -7,7 +7,7 @@
 - name: Install required system packages
   become: true
   apt: name={{ item }} state=latest update_cache=yes
-  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools', 'unzip']
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools', 'unzip', 'file']
   tags:
     - pipelines
 
@@ -57,23 +57,12 @@
     - pipelines
     - docopts
 
-#- name: Update apt and install pipelines
-#  apt: update_cache=yes name=la-pipelines={{ pipelines_version }} force=yes
-#  tags:
-#    - pipelines
-#    - la-pipelines
-#    - la-pipelines-apt
-#    - apt
-
-#livingatlas/pipelines/target/la-pipelines.jar usr/share/la-pipelines/
-#livingatlas/scripts/la-pipelines usr/bin
-#livingatlas/scripts/logging_lib.sh usr/share/la-pipelines/
-##livingatlas/pipelines/target/la-pipelines usr/share/bash-completion/completions/
-##livingatlas/pipelines/src/main/resources/log4j-colorized.properties data/la-pipelines/config
-##livingatlas/pipelines/src/main/resources/log4j.properties data/la-pipelines/config
-##livingatlas/configs/la-pipelines.yaml data/la-pipelines/config
-##livingatlas/pipelines/target/la-pipelines-local.yaml.sample data/la-pipelines/config
-##livingatlas/pipelines/src/main/resources/logback.xml data/la-pipelines/config
+- name: Install pipelines using apt
+  become: true
+  apt: update_cache=yes name=la-pipelines={{ pipelines_version }} force=yes
+  tags:
+    - pipelines
+    - pipelines-apt
 
 - name: Install pipelines config
   template: src={{ item }} dest={{ data_dir }}/la-pipelines/config/{{ item }} mode=0644 output_encoding=iso-8859-1
