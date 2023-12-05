@@ -197,3 +197,12 @@
   tags:
     - pipelines
     - pipelines-layers
+
+- name: Copy sbdi-load
+  become: true
+  copy: src={{ item }} dest=/usr/bin/{{ item }} mode=0755
+  with_items:
+    - sbdi-load
+  tags:
+    - pipelines
+    - scripts
