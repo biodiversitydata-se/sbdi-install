@@ -13,5 +13,8 @@
 [hadoop]
 127.0.0.1 ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true
 
+[spark]
+127.0.0.1 ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true
+
 [cluster_master]
 127.0.0.1
