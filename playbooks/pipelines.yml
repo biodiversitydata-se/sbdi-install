@@ -1,5 +1,5 @@
 - name: Install Java and la-apt
-  hosts: pipelines
+  hosts: pipelines, hadoop
   become: true
   vars:
     use_openjdk11: false
@@ -7,6 +7,12 @@
   roles:
     - ../roles/java
     - ../roles/la-apt
+
+- name: Install hadoop
+  hosts: hadoop
+  become: true
+  roles:
+    - ../roles/hadoop
 
 - name: Install pipelines
   hosts: pipelines
