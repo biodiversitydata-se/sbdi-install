@@ -1,0 +1,4 @@
+data_dir: /data
+docker_dir: "{{ data_dir }}/docker"
+spark_user: ubuntu
+pipelines_version: "*"

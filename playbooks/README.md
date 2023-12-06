@@ -3,6 +3,9 @@
 ## Apps
 [See apps role](../roles/apps/README.md)
 
+## Pipelines
+[See pipelines role](../roles/pipelines/README.md)
+
 ## Solrcloud
 Installs the solrcloud configset and creates the biocache collection. This playbook assumes the solrcloud app have been installed (using the apps playbook) and is running.
 

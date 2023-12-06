@@ -1,0 +1,9 @@
+- name: Set up la-apt
+  hosts: pipelines
+  roles:
+    - ../roles/la-apt
+
+- name: Install pipelines
+  hosts: pipelines
+  roles:
+    - ../roles/pipelines
