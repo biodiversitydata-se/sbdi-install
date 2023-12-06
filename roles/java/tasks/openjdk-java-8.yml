@@ -1,0 +1,46 @@
+#- include: ../../common/tasks/setfacts.yml 
+#  tags:
+#    - java
+
+- set_fact:
+    java_package: "{{ 'openjdk-8-' + java_package_suffix[java_headless | bool][java_jre | bool] }}"
+
+- name: install ca-certificates & openjdk 8 java (Debian)
+  apt: 
+    pkg: 
+     - ca-certificates
+     - "{{ java_package }}"
+    state: latest
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+  tags:
+    - java
+
+# Optionally remove Oracle Java 8 if they explicitly chose OpenJDK8
+# In future, will remove Oracle Java 8 by default here
+- name: Remove Oracle Java 8 (using OpenJDK8 instead)
+  become: yes
+  apt: pkg=oracle-java8-installer state=absent purge=yes
+  when: ansible_os_family == "Debian" and use_openjdk8 is defined and use_openjdk8
+  tags:
+    - java
+
+- name: Remove Oracle Java 8 as default JDK
+  become: yes
+  apt: pkg=oracle-java8-set-default state=absent purge=yes
+  when: ansible_os_family == "Debian" and use_openjdk8 is defined and use_openjdk8
+  tags:
+    - java
+
+# Workaround to add legacy TLS
+# https://github.com/AtlasOfLivingAustralia/ala-install/issues/481
+- name: copy enableLegacyTLS.security
+  template:
+    src: enableLegacyTLS.security
+    dest: /etc/java-8-openjdk/security/enableLegacyTLS.security
+    owner: root
+    group: root
+  when: ansible_os_family == "Debian" and use_openjdk8 is defined and use_openjdk8
+  tags:
+    - java
+    - java-security

@@ -1,6 +1,11 @@
-- name: Set up la-apt
+- name: Install Java and la-apt
   hosts: pipelines
+  become: true
+  vars:
+    use_openjdk11: false
+    use_openjdk8: true
   roles:
+    - ../roles/java
     - ../roles/la-apt
 
 - name: Install pipelines
