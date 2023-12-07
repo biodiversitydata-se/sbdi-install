@@ -1,18 +1,15 @@
 - name: Install aptitude using apt
-  become: true
   apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
   tags:
     - pipelines
 
 - name: Install required system packages
-  become: true
   apt: name={{ item }} state=latest update_cache=yes
   loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools', 'unzip', 'file']
   tags:
     - pipelines
 
 - name: Add Docker GPG apt Key
-  become: true
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
@@ -21,7 +18,6 @@
     - docker
 
 - name: Add Docker Repository
-  become: true
   apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu bionic stable
     state: present
@@ -30,7 +26,6 @@
     - docker
 
 - name: Update apt and install docker-ce
-  become: true
   apt: update_cache=yes name={{ item }} state=latest
   with_items:
     - docker-ce
@@ -42,7 +37,6 @@
     - docker
 
 - name: Create pipelines working directories
-  become: true
   file: path={{ item }} state=directory owner={{ spark_user }} group={{ spark_user }} recurse=true
   with_items:
     - "{{ data_dir }}/la-pipelines/config"
@@ -52,13 +46,11 @@
     - "{{ data_dir }}/dwca-tmp"
     - "{{ data_dir }}/dwca-export"
     - "{{ data_dir }}/migration"
-    - "{{ data_dir }}/pipelines-vocabularies"
   tags:
     - pipelines
     - pipelines-config
 
 - name: Update docker directory
-  become: true
   template: src={{ item }} dest=/etc/docker/daemon.json
   with_items:
     - daemon.json
@@ -67,7 +59,6 @@
     - docker
 
 - name: Restart docker
-  become: true
   service:
     name: docker
     state: restarted
@@ -78,7 +69,6 @@
 # yq is needed by the la-pipelines script
 
 - name: Download yq
-  become: true
   get_url:
     url: "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
     dest: "/usr/bin/yq"
@@ -91,7 +81,6 @@
 # docopts is needed by the la-pipelines script
 
 - name: Get docopts
-  become: true
   shell: curl -o /usr/local/bin/docopts -LJO https://github.com/docopt/docopts/releases/download/v0.6.3-rc2/docopts_linux_amd64
   when: is_arm is not defined
   tags:
@@ -99,14 +88,12 @@
     - docopts
 
 - name: Make docopts executable
-  become: true
   shell: chmod +x /usr/local/bin/docopts
   tags:
     - pipelines
     - docopts
 
-- name: Install pipelines using apt
-  become: true
+- name: Update apt and install pipelines
   apt: update_cache=yes name=la-pipelines={{ pipelines_version }} force=yes
   tags:
     - pipelines
@@ -129,7 +116,6 @@
     - pipelines-services
   
 - name: Copy service scripts to /usr/bin
-  become: true
   copy: src={{ item }} dest=/usr/bin/{{ item }} mode=777
   with_items:
     - ala-sensitive-data-service.sh
@@ -138,7 +124,6 @@
     - pipelines-services
 
 - name: Copy docker service files to /etc/systemd/system
-  become: true
   copy: src={{ item }} dest=/etc/systemd/system/{{ item }}
   with_items:
     - ala-sensitive-data-service.service
@@ -147,7 +132,6 @@
     - pipelines-services
 
 #- name: Enable services
-#  become: true
 #  service: name={{ item }} enabled=yes
 #  with_items:
 #    - ala-sensitive-data-service
@@ -156,7 +140,6 @@
 #    - pipelines-services
 
 #- name: Start service ala-sensitive-data-service, if not running
-#  become: true
 #  service:
 #    name: ala-sensitive-data-service
 #    state: started
@@ -164,11 +147,51 @@
 #    - pipelines
 #    - pipelines-services
 
+- name: Create HDFS base directories
+  shell: "{{ hadoop_install_dir }}/bin/hdfs dfs -mkdir -p {{ item }}"
+  with_items:
+    - "/dwca-exports"
+    - "/dwca-imports"
+    - "/pipelines-data"
+    - "/pipelines-outlier"
+    - "/pipelines-all-datasets"
+    - "/pipelines-species"
+    - "/pipelines-jackknife"
+    - "/pipelines-clustering"
+    - "/pipelines-vocabularies"
+    - "/migration"
+  become: yes
+  become_user: "{{ hadoop.user }}"
+  tags:
+    - pipelines
+    - hadoop
+    - hadoop_dir
+
+- name: Set ownership of HDFS base directories
+  shell: "{{ hadoop_install_dir }}/bin/hdfs dfs -chown {{ spark_user }}:{{ spark_user }} {{ item }}"
+  with_items:
+    - "/dwca-exports"
+    - "/dwca-imports"
+    - "/pipelines-data"
+    - "/pipelines-outlier"
+    - "/pipelines-all-datasets"
+    - "/pipelines-species"
+    - "/pipelines-jackknife"
+    - "/pipelines-clustering"
+    - "/pipelines-vocabularies"
+    - "/migration"
+  become: yes
+  become_user: "{{ hadoop.user }}"
+  tags:
+    - pipelines
+    - hadoop
+    - hadoop_dir
+
 - name: Get Gbif API vocabularies
   run_once: true
   uri:
     url: "http://api.gbif.org/v1/vocabularies/{{ item }}/releases/latest/export"
-    dest: /data/pipelines-vocabularies/{{ item }}.json
+    dest: /tmp/{{ item }}.json
   with_items:
     - LifeStage
     - DegreeOfEstablishment
@@ -178,8 +201,26 @@
     - pipelines
     - pipelines-vocabularies
 
+- name: Copy Gbif API vocabularies to dfs
+  run_once: true
+  shell: "{{ hadoop_install_dir }}/bin/hdfs dfs -copyFromLocal -f /tmp/{{ item }}.json /pipelines-vocabularies/ "
+  with_items:
+    - LifeStage
+    - DegreeOfEstablishment
+    - EstablishmentMeans
+    - Pathway
+  become_user: "{{ hadoop.user }}"
+  tags:
+    - pipelines
+    - pipelines-vocabularies
+
 - name: Copy states file
-  copy: src={{ item }} dest={{ data_dir }}/la-pipelines/config/{{ item }} mode=0644
+  copy: 
+    src: "{{ item }}" 
+    dest: "{{ data_dir }}/la-pipelines/config/{{ item }}"
+    mode: 0644
+    owner: "{{ spark_user }}"
+    group: "{{ spark_user }}"
   with_items:
     - stateProvinces.tsv
   tags:
@@ -199,10 +240,19 @@
     - pipelines-layers
 
 - name: Copy sbdi-load
-  become: true
   copy: src={{ item }} dest=/usr/bin/{{ item }} mode=0755
   with_items:
     - sbdi-load
   tags:
     - pipelines
     - scripts
+
+- name: Copy additional logging configs
+  copy: src={{ item.src }} dest={{ item.dest }} owner={{ item.owner }} group={{ item.group }}
+  with_items:
+    - { src: "{{ logback_pipelines_conf | default('logback.xml') }}", dest: "{{ data_dir }}/la-pipelines/config/logback.xml", owner: "{{ spark_user }}", group: "{{ spark_user }}" }
+    - { src: "{{ log4j_spark_conf | default('log4j-spark.properties') }}", dest: "{{ data_dir }}/spark/conf/log4j.properties", owner: "{{ spark_user }}", group: "{{ spark_user }}" }
+  tags:
+    - pipelines
+    - pipelines-config
+    

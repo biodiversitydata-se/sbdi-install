@@ -22,5 +22,6 @@
 
 - name: Install pipelines
   hosts: pipelines
+  become: true
   roles:
     - ../roles/pipelines

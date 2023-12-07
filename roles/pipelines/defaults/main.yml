@@ -1,4 +1,11 @@
 data_dir: /data
 docker_dir: "{{ data_dir }}/docker"
-spark_user: ubuntu
+
+spark_user: spark
+
+hadoop:
+  version: 2.10.2
+  user: hadoop
+hadoop_install_dir: "/data/hadoop"
+
 pipelines_version: "*"
