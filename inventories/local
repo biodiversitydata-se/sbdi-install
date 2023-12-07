@@ -8,13 +8,16 @@
 127.0.0.1 ansible_connection=local
 
 [pipelines]
-127.0.0.1 ansible_connection=ssh ansible_user=ubuntu
+master ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true 
+worker ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true ansible_port=23
 
 [hadoop]
-127.0.0.1 ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true
+master ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true
+worker ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true ansible_port=23
 
 [spark]
-127.0.0.1 ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true
+master ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true
+worker ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pipelining=true ansible_port=23
 
 [cluster_master]
-127.0.0.1
+master

@@ -4,11 +4,13 @@ general:
 
 run:
   platform: spark-cluster
+  spark-cluster:
+    sparkMaster: spark://master:7077
 
 fs:
   platform: hdfs
   hdfs:
-    fsPath: hdfs://127.0.0.1:9000
+    fsPath: hdfs://master:9000
 
 dwca-avro:
   inputPath: /data/dwca-export/{datasetId}/{datasetId}.zip

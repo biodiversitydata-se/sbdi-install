@@ -10,14 +10,14 @@ hadoop:
   user: hadoop
   user_shell: /bin/bash
   default_hosts:
-    - 0.0.0.0
-    - 127.0.0.1
-    - localhost
-  secondary_name_node: 0.0.0.0
+    - master
+    - worker
+  secondary_name_node: master
   slaves:
-    - localhost
+    - master
+    - worker
 hadoop_install_dir: "/data/hadoop"
-hadoop_master_ip: 127.0.0.1
+hadoop_master_ip: master
 master_nodes: "{% if 'cluster_master' in groups %} {{ groups['cluster_master']|length }} {% else  %} 0 {% endif %}"
 data_nodes: "{% if 'cluster_nodes' in groups %} {{ groups['cluster_nodes']|length }} {% else  %} 0 {% endif %}"
 number_of_nodes: "{{ master_nodes + data_nodes }}"

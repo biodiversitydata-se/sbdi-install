@@ -3,9 +3,9 @@ spark:
   version: 2.4.8
   hadoop_version: 2.10.2
   working_dir: /tmp/spark/data
-  master_host: localhost
+  master_host: master
   master_port: 7077
-  master_ip: 127.0.0.1
+  master_ip: master
   worker_work_port: 65000
   master_ui_port: 8080
   worker_ui_port: 8085
@@ -13,16 +13,16 @@ spark:
   user: "spark"               # the name of the (OS)user created for spark
   user_shell: /bin/bash
   default_hosts:
-  - 0.0.0.0
-  - 127.0.0.1
-  - localhost
+  - master
+  - worker
   env_extras: {}
   defaults_extras: {}
   slaves:
-    - localhost
+    - master
+    - worker
 spark_installation_dir: "/data/spark"
 spark_archive: "spark-{{ spark.version }}-bin-without-hadoop.tgz"
 spark_download: "{{ spark.download_location }}spark-{{ spark.version }}/{{ spark_archive }}"
 spark_num_workers: "{{ (groups['cluster_master']+ groups['cluster_nodes']) |length|int}}"
-spark_master_ip: 127.0.0.1
+spark_master_ip: master
 ssh_key_filename: "spark_key"
