@@ -4,20 +4,20 @@
 set -e
 
 dr=$1
-dr_data=/data/pipelines-data/$dr/1
+dr_data=/pipelines-data/$dr/1
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 $scriptpath/la-pipelines dwca-avro $dr
 $scriptpath/la-pipelines interpret $dr
 $scriptpath/la-pipelines uuid $dr
 $scriptpath/la-pipelines sds $dr
-if grep -q multimediaRecordsCountAttempted "$dr_data/interpretation-metrics.yml"; then
+if hdfs dfs -cat "$dr_data/interpretation-metrics.yml" | grep -q multimediaRecordsCountAttempted; then
   $scriptpath/la-pipelines image-load $dr
   $scriptpath/la-pipelines image-sync $dr
 fi
 $scriptpath/la-pipelines index $dr
 $scriptpath/la-pipelines sample $dr
-if [ ! -d "$dr_data/sampling" ]; then
+if ! hdfs dfs -test -d "$dr_data/sampling"; then
   extra_args="--extra-args=includeSampling=false"
 fi
 $scriptpath/la-pipelines solr $dr $extra_args
