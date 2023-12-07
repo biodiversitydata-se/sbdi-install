@@ -1,7 +1,7 @@
 ---
 hadoop:
-  version: 3.3.6
-  hadoop_archive: hadoop-3.3.6.tar.gz
+  version: 2.10.2
+  hadoop_archive: hadoop-2.10.2.tar.gz
   data_dir: /var/hadoop/data
   name_dir: /var/hadoop/name
   temp_dir: /tmp/hadoop/hdfs/tmp
@@ -12,8 +12,10 @@ hadoop:
   default_hosts:
     - 0.0.0.0
     - 127.0.0.1
-  slaves: []
-hadoop_install_dir: "/opt/hadoop-{{ hadoop.version }}"
+    - localhost
+  slaves:
+    - localhost
+hadoop_install_dir: "/data/hadoop"
 hadoop_master_ip: 127.0.0.1
 master_nodes: "{% if 'cluster_master' in groups %} {{ groups['cluster_master']|length }} {% else  %} 0 {% endif %}"
 data_nodes: "{% if 'cluster_nodes' in groups %} {{ groups['cluster_nodes']|length }} {% else  %} 0 {% endif %}"
