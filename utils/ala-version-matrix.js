@@ -15,17 +15,7 @@ const blankService = {
     buildInfoProperties: {},
 }
 
-const fetchService = async(url) => {
-    try {
-        const response = await fetch(url);
-        return response.json();
-    } catch (error) {
-        console.log('Failed to fetch: ' + url)
-        return blankService;
-    }      
-}
-
-const decorateService = async(service, prefix) => {
+const fetchServiceBuildInfo = async(service, prefix) => {
     const hostProperty = prefix + 'Host';
     const urlProperty = prefix + 'Url';
     const domainSuffix = {
@@ -40,7 +30,22 @@ const decorateService = async(service, prefix) => {
     const context = (prefix + 'Context' in service) ? service[prefix + 'Context'] : '';
     service[urlProperty] = 'https://' + service[hostProperty] + domainSuffix[prefix] + context + '/buildInfo?format=json'
     //console.log(service[urlProperty]);
-    service[prefix] = service.source === 'none' ? blankService : await fetchService(service[urlProperty]);
+
+    try {
+        const response = await fetch(service[urlProperty]);
+        return response.json();
+    } catch (error) {
+        console.log('Failed to fetch: ' + service[urlProperty])
+        return blankService;
+    }      
+}
+
+const decorateService = async(service, prefix) => {
+    if (service.source === 'none') {
+        service[prefix] = blankService;
+    } else { // source = buildInfo
+        service[prefix] = await fetchServiceBuildInfo(service, prefix);
+    }
 }
 
 const fetchServices = async() => {
