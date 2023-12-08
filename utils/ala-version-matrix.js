@@ -37,12 +37,32 @@ const fetchServiceBuildInfo = async(service, prefix) => {
     } catch (error) {
         console.log('Failed to fetch: ' + service[urlProperty])
         return blankService;
-    }      
+    }
+}
+
+const fetchServiceBuildGradle = async(service, prefix) => {
+    const urlProperty = prefix + 'Url';
+    const githubOrg = {
+        ala: 'AtlasOfLivingAustralia',
+        sbdi: 'biodiversitydata-se'
+    }
+    service[urlProperty] = 'https://raw.githubusercontent.com/' + githubOrg[prefix] + '/logger-service/master/build.gradle'
+    //console.log(service[urlProperty]);
+
+    try {
+        const response = await fetch(service[urlProperty]);
+        return blankService;
+    } catch (error) {
+        console.log('Failed to fetch: ' + service[urlProperty])
+        return blankService;
+    }
 }
 
 const decorateService = async(service, prefix) => {
     if (service.source === 'none') {
         service[prefix] = blankService;
+    } else if (service.source === 'buildGradle') {
+        service[prefix] = await fetchServiceBuildGradle(service, prefix);
     } else { // source = buildInfo
         service[prefix] = await fetchServiceBuildInfo(service, prefix);
     }
@@ -73,9 +93,10 @@ const fetchServices = async() => {
         },
         {
             name: 'logger',
-            alaContext: '/alaAdmin',
-            sbdiContext: '/alaAdmin',
-            source: 'none', // requires auth
+            source: 'buildGradle'
+            // requires auth
+            //alaContext: '/alaAdmin',
+            //sbdiContext: '/alaAdmin',
         },
         {
             name: 'namematching',
