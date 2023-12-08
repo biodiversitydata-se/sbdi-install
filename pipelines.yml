@@ -5,23 +5,23 @@
     use_openjdk11: false
     use_openjdk8: true
   roles:
-    - ../roles/java
-    - ../roles/la-apt
+    - java
+    - la-apt
 
 - name: Install hadoop
   hosts: hadoop
   become: true
   roles:
-    - ../roles/hadoop
+    - hadoop
 
 - name: Install spark
   hosts: spark
   become: true
   roles:
-    - ../roles/spark
+    - spark
 
 - name: Install pipelines
   hosts: pipelines
   become: true
   roles:
-    - ../roles/pipelines
+    - pipelines

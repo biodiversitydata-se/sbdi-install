@@ -31,7 +31,7 @@
 
     - name: Deploy {{ app_name }} {{ app_version }}
       include_role:
-        name: "../roles/apps/{{ app_name }}"
+        name: "{{ app_name }}"
       tags:
         - deploy
         - app_config

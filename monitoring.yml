@@ -6,7 +6,7 @@
   tags:
     - target
   roles:
-    - ../roles/monitoring/target
+    - monitoring/target
 
 - name: Restart target services
   hosts: monitoring_target
@@ -39,7 +39,7 @@
   tags:
     - observer
   roles:
-    - ../roles/monitoring/observer
+    - monitoring/observer
 
 - name: Restart observer services
   hosts: monitoring_observer

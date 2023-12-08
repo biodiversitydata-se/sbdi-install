@@ -1,5 +1,5 @@
 # Pipelines
 
 ```
-ansible-playbook -i inventories/local playbooks/pipelines.yml --ask-become-pass
+ansible-playbook -i inventories/local pipelines.yml --ask-become-pass
 ```

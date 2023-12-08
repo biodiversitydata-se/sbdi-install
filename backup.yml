@@ -2,4 +2,4 @@
   hosts: backup_server
   become: true
   roles:
-    - ../roles/backup
+    - backup

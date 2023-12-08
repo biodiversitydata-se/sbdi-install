@@ -10,12 +10,12 @@ The backup playbook will do the following:
 
 Set up backup server:
 ```
-ansible-playbook -i inventories/prod playbooks/backup.yml --ask-become-pass
+ansible-playbook -i inventories/prod backup.yml --ask-become-pass
 ```
 
 Only copy backup scripts (bin folder) to server:
 ```
-ansible-playbook -i inventories/prod playbooks/backup.yml -t scripts --ask-become-pass
+ansible-playbook -i inventories/prod backup.yml -t scripts --ask-become-pass
 ```
 
 ## Nightly backups
