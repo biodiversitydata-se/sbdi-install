@@ -100,7 +100,13 @@
     - pipelines-apt
 
 - name: Install pipelines config
-  template: src={{ item }} dest={{ data_dir }}/la-pipelines/config/{{ item }} mode=0644 output_encoding=iso-8859-1
+  template:
+    src: "{{ item }}"
+    dest: "{{ data_dir }}/la-pipelines/config/{{ item }}"
+    mode: 0644
+    owner: "{{ spark_user }}"
+    group: "{{ spark_user }}"
+    output_encoding: iso-8859-1
   with_items:
     - la-pipelines-local.yaml
   tags:
@@ -164,7 +170,6 @@
   become_user: "{{ hadoop.user }}"
   tags:
     - pipelines
-    - hadoop
     - hadoop_dir
 
 - name: Set ownership of HDFS base directories
@@ -184,7 +189,6 @@
   become_user: "{{ hadoop.user }}"
   tags:
     - pipelines
-    - hadoop
     - hadoop_dir
 
 - name: Get Gbif API vocabularies
@@ -245,7 +249,7 @@
     - sbdi-load
   tags:
     - pipelines
-    - scripts
+    - pipelines-scripts
 
 - name: Copy additional logging configs
   copy: src={{ item.src }} dest={{ item.dest }} owner={{ item.owner }} group={{ item.group }}
