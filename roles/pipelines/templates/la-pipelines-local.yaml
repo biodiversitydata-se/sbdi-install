@@ -25,13 +25,13 @@ sds:
 collectory:
   wsUrl: https://collections.biodiversitydata.se/ws/
   httpHeaders:
-    Authorization:
+    Authorization: {{ pipelines.collectory_apikey }}
 
 imageService:
   #wsUrl: https://images.biodiversitydata.se/ws/
   wsUrl: http://localhost:8082/
   httpHeaders:
-    apiKey:
+    apiKey: {{ pipelines.imageservice_apikey }}
 
 speciesListService:
   wsUrl: https://lists.biodiversitydata.se
