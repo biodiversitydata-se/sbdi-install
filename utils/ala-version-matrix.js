@@ -40,7 +40,7 @@ const decorateService = async(service, prefix) => {
     const context = (prefix + 'Context' in service) ? service[prefix + 'Context'] : '';
     service[urlProperty] = 'https://' + service[hostProperty] + domainSuffix[prefix] + context + '/buildInfo?format=json'
     //console.log(service[urlProperty]);
-    service[prefix] = service.skipFetch ? blankService : await fetchService(service[urlProperty]);
+    service[prefix] = service.source === 'none' ? blankService : await fetchService(service[urlProperty]);
 }
 
 const fetchServices = async() => {
@@ -48,11 +48,11 @@ const fetchServices = async() => {
     const services = [
         {
             name: 'apikey',
-            skipFetch: true, // buildInfo not available
+            source: 'none', // buildInfo not available
         },
         {
             name: 'cas',
-            skipFetch: true, // buildInfo not available
+            source: 'none', // buildInfo not available
         },
         {
             name: 'collections',
@@ -70,11 +70,11 @@ const fetchServices = async() => {
             name: 'logger',
             alaContext: '/alaAdmin',
             sbdiContext: '/alaAdmin',
-            skipFetch: true, // requires auth
+            source: 'none', // requires auth
         },
         {
             name: 'namematching',
-            skipFetch: true, // buildInfo not available
+            source: 'none', // buildInfo not available
         },
         {
             name: 'records',
@@ -86,7 +86,7 @@ const fetchServices = async() => {
             sbdiHost: 'records',
             alaContext: '/ws',
             sbdiContext: '/ws',
-            skipFetch: true, // ?format=json doesn't work
+            source: 'none', // ?format=json doesn't work
         },
         {
             name: 'regions',
@@ -114,7 +114,7 @@ const fetchServices = async() => {
             sbdiHost: 'species',
             alaContext: '/ws/alaAdmin',
             sbdiContext: '/ws/alaAdmin',
-            skipFetch: true, // requires auth
+            source: 'none', // requires auth
         },
         {
             name: 'userdetails',
@@ -122,7 +122,7 @@ const fetchServices = async() => {
             sbdiHost: 'auth',
             alaContext: '/userdetails/alaAdmin',
             sbdiContext: '/userdetails/alaAdmin',
-            skipFetch: true, // requires auth
+            source: 'none', // requires auth
         },
     ];
 
