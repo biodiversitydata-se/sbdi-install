@@ -40,7 +40,7 @@ const fetchServiceBuildInfo = async(service, prefix) => {
     }
 }
 
-const fetchServiceBuildGradle = async(service, prefix) => {
+const fetchServiceGithubGradle = async(service, prefix) => {
     const urlProperty = prefix + 'Url';
     const githubOrg = {
         ala: 'AtlasOfLivingAustralia',
@@ -68,8 +68,8 @@ const fetchServiceBuildGradle = async(service, prefix) => {
 const decorateService = async(service, prefix) => {
     if (service.source === 'none') {
         service[prefix] = blankService;
-    } else if (service.source === 'buildGradle') {
-        service[prefix] = await fetchServiceBuildGradle(service, prefix);
+    } else if (service.source === 'githubGradle') {
+        service[prefix] = await fetchServiceGithubGradle(service, prefix);
     } else { // source = buildInfo
         service[prefix] = await fetchServiceBuildInfo(service, prefix);
     }
@@ -81,7 +81,7 @@ const fetchServices = async() => {
         {
             name: 'apikey',
             // buildInfo not available
-            source: 'buildGradle',
+            source: 'githubGradle',
             repo: 'apikey',
         },
         {
@@ -105,7 +105,7 @@ const fetchServices = async() => {
             // requires auth
             //alaContext: '/alaAdmin',
             //sbdiContext: '/alaAdmin',
-            source: 'buildGradle',
+            source: 'githubGradle',
             repo: 'logger-service',
         },
         {
@@ -123,7 +123,7 @@ const fetchServices = async() => {
             //sbdiHost: 'records',
             //alaContext: '/ws',
             //sbdiContext: '/ws',
-            source: 'buildGradle',
+            source: 'githubGradle',
             repo: 'biocache-service',
         },
         {
@@ -153,7 +153,7 @@ const fetchServices = async() => {
             //sbdiHost: 'species',
             //alaContext: '/ws/alaAdmin',
             //sbdiContext: '/ws/alaAdmin',
-            source: 'buildGradle',
+            source: 'githubGradle',
             repo: 'bie-index',
         },
         {
@@ -163,7 +163,7 @@ const fetchServices = async() => {
             //sbdiHost: 'auth',
             //alaContext: '/userdetails/alaAdmin',
             //sbdiContext: '/userdetails/alaAdmin',
-            source: 'buildGradle',
+            source: 'githubGradle',
             repo: 'userdetails',
         },
     ];
