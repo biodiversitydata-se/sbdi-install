@@ -5,9 +5,8 @@ This script displays a table comparing versions between ALA (ala.org.au)
 and SBDI (biodiversitydata.se) of the various LA services. 
 
 The script uses the buildInfo endpoint to get version information. 
-Unfortunately this endpoint is not available on all services. Those services 
-are listed with blank versions. This could be improved upon since there are 
-other sources for version infomation like openapi or github.
+Unfortunately this endpoint is not available on all services. For those 
+services the version is fetched from either maven or gradle files in github.
 */
 
 const blankService = {
@@ -15,17 +14,7 @@ const blankService = {
     buildInfoProperties: {},
 }
 
-const fetchService = async(url) => {
-    try {
-        const response = await fetch(url);
-        return response.json();
-    } catch (error) {
-        console.log('Failed to fetch: ' + url)
-        return blankService;
-    }      
-}
-
-const decorateService = async(service, prefix) => {
+const fetchServiceBuildInfo = async(service, prefix) => {
     const hostProperty = prefix + 'Host';
     const urlProperty = prefix + 'Url';
     const domainSuffix = {
@@ -40,7 +29,77 @@ const decorateService = async(service, prefix) => {
     const context = (prefix + 'Context' in service) ? service[prefix + 'Context'] : '';
     service[urlProperty] = 'https://' + service[hostProperty] + domainSuffix[prefix] + context + '/buildInfo?format=json'
     //console.log(service[urlProperty]);
-    service[prefix] = service.skipFetch ? blankService : await fetchService(service[urlProperty]);
+
+    try {
+        const response = await fetch(service[urlProperty]);
+        return response.json();
+    } catch (error) {
+        console.log('Failed to fetch: ' + service[urlProperty])
+        return blankService;
+    }
+}
+
+const fetchServiceGithubGradle = async(service, prefix) => {
+    const urlProperty = prefix + 'Url';
+    const githubOrg = {
+        ala: 'AtlasOfLivingAustralia',
+        sbdi: 'biodiversitydata-se'
+    }
+    service[urlProperty] = 'https://raw.githubusercontent.com/' + githubOrg[prefix] + '/' + service.repo + '/master/build.gradle'
+    //console.log(service[urlProperty]);
+
+    try {
+        const response = await fetch(service[urlProperty]);
+        const body = await response.text();
+        const matchResult = body.match(/\nversion(?: | ?= ?)(?:"|')(.*)(?:"|')\n/);
+        return  {
+            runtimeEnvironment: {
+                'app.version': matchResult[1]
+            },
+            buildInfoProperties: {},
+        }
+    } catch (error) {
+        console.log('Failed to fetch: ' + service[urlProperty])
+        return blankService;
+    }
+}
+
+const fetchServiceGithubMaven = async(service, prefix) => {
+    const urlProperty = prefix + 'Url';
+    const githubOrg = {
+        ala: 'AtlasOfLivingAustralia',
+        sbdi: 'biodiversitydata-se'
+    }
+    service[urlProperty] = 'https://raw.githubusercontent.com/' + githubOrg[prefix] + '/' + service.repo + '/master/pom.xml'
+    //console.log(service[urlProperty]);
+
+    try {
+        const response = await fetch(service[urlProperty]);
+        const body = await response.text();
+        const matchResult = [...body.matchAll(/<version>(.*)<\/version>/g)];
+        return  {
+            runtimeEnvironment: {
+                // This assumes that the second match is the one we want
+                'app.version': matchResult[1][1]
+            },
+            buildInfoProperties: {},
+        }
+    } catch (error) {
+        console.log('Failed to fetch: ' + service[urlProperty])
+        return blankService;
+    }
+}
+
+const decorateService = async(service, prefix) => {
+    if (service.source === 'none') {
+        service[prefix] = blankService;
+    } else if (service.source === 'githubGradle') {
+        service[prefix] = await fetchServiceGithubGradle(service, prefix);
+    } else if (service.source === 'githubMaven') {
+        service[prefix] = await fetchServiceGithubMaven(service, prefix);
+    } else { // source = buildInfo
+        service[prefix] = await fetchServiceBuildInfo(service, prefix);
+    }
 }
 
 const fetchServices = async() => {
@@ -48,11 +107,15 @@ const fetchServices = async() => {
     const services = [
         {
             name: 'apikey',
-            skipFetch: true, // buildInfo not available
+            // buildInfo not available
+            source: 'githubGradle',
+            repo: 'apikey',
         },
         {
             name: 'cas',
-            skipFetch: true, // buildInfo not available
+            // buildInfo not available
+            source: 'githubMaven',
+            repo: 'ala-cas-5'
         },
         {
             name: 'collections',
@@ -68,13 +131,17 @@ const fetchServices = async() => {
         },
         {
             name: 'logger',
-            alaContext: '/alaAdmin',
-            sbdiContext: '/alaAdmin',
-            skipFetch: true, // requires auth
+            // requires auth
+            //alaContext: '/alaAdmin',
+            //sbdiContext: '/alaAdmin',
+            source: 'githubGradle',
+            repo: 'logger-service',
         },
         {
             name: 'namematching',
-            skipFetch: true, // buildInfo not available
+            // buildInfo not available
+            source: 'githubMaven',
+            repo: 'ala-namematching-service'
         },
         {
             name: 'records',
@@ -82,11 +149,13 @@ const fetchServices = async() => {
         },
         {
             name: 'records-service',
-            alaHost: 'biocache',
-            sbdiHost: 'records',
-            alaContext: '/ws',
-            sbdiContext: '/ws',
-            skipFetch: true, // ?format=json doesn't work
+            // ?format=json doesn't work
+            //alaHost: 'biocache',
+            //sbdiHost: 'records',
+            //alaContext: '/ws',
+            //sbdiContext: '/ws',
+            source: 'githubGradle',
+            repo: 'biocache-service',
         },
         {
             name: 'regions',
@@ -110,19 +179,23 @@ const fetchServices = async() => {
         },
         {
             name: 'species-service',
-            alaHost: 'bie',
-            sbdiHost: 'species',
-            alaContext: '/ws/alaAdmin',
-            sbdiContext: '/ws/alaAdmin',
-            skipFetch: true, // requires auth
+            // requires auth
+            //alaHost: 'bie',
+            //sbdiHost: 'species',
+            //alaContext: '/ws/alaAdmin',
+            //sbdiContext: '/ws/alaAdmin',
+            source: 'githubGradle',
+            repo: 'bie-index',
         },
         {
             name: 'userdetails',
-            alaHost: 'auth',
-            sbdiHost: 'auth',
-            alaContext: '/userdetails/alaAdmin',
-            sbdiContext: '/userdetails/alaAdmin',
-            skipFetch: true, // requires auth
+             // requires auth
+            //alaHost: 'auth',
+            //sbdiHost: 'auth',
+            //alaContext: '/userdetails/alaAdmin',
+            //sbdiContext: '/userdetails/alaAdmin',
+            source: 'githubGradle',
+            repo: 'userdetails',
         },
     ];
 
@@ -148,7 +221,7 @@ const format = (value) => {
 
 const displayServices = (services) => {
     console.log(
-        'App'.padStart(26), 
+        'App'.padStart(27),
         'App'.padStart(10),
         'Java'.padStart(12),
         'Java'.padStart(12),
@@ -156,8 +229,8 @@ const displayServices = (services) => {
         'Grails'.padStart(10),
         );
     console.log(
-        'Service'.padEnd(15), 
-        'ALA'.padStart(10), 
+        'Service'.padEnd(16),
+        'ALA'.padStart(10),
         'SBDI'.padStart(10),
         'ALA'.padStart(12),
         'SBDI'.padStart(12),
@@ -169,8 +242,8 @@ const displayServices = (services) => {
 
     services.forEach(service => {
         console.log(
-            ((isBehind(service) ? '*' : '') + service.name).padEnd(15), 
-            format(service.ala.runtimeEnvironment['app.version']).padStart(10), 
+            ((isBehind(service) ? '*' : '') + service.name).padEnd(16),
+            format(service.ala.runtimeEnvironment['app.version']).padStart(10),
             format(service.sbdi.runtimeEnvironment['app.version']).padStart(10),
             format(service.ala.runtimeEnvironment['java.version']).padStart(12),
             format(service.sbdi.runtimeEnvironment['java.version']).padStart(12),
