@@ -5,9 +5,8 @@ This script displays a table comparing versions between ALA (ala.org.au)
 and SBDI (biodiversitydata.se) of the various LA services. 
 
 The script uses the buildInfo endpoint to get version information. 
-Unfortunately this endpoint is not available on all services. Those services 
-are listed with blank versions. This could be improved upon since there are 
-other sources for version infomation like openapi or github.
+Unfortunately this endpoint is not available on all services. For those 
+services the version is fetched from either maven or gradle files in github.
 */
 
 const blankService = {
@@ -65,11 +64,39 @@ const fetchServiceGithubGradle = async(service, prefix) => {
     }
 }
 
+const fetchServiceGithubMaven = async(service, prefix) => {
+    const urlProperty = prefix + 'Url';
+    const githubOrg = {
+        ala: 'AtlasOfLivingAustralia',
+        sbdi: 'biodiversitydata-se'
+    }
+    service[urlProperty] = 'https://raw.githubusercontent.com/' + githubOrg[prefix] + '/' + service.repo + '/master/pom.xml'
+    //console.log(service[urlProperty]);
+
+    try {
+        const response = await fetch(service[urlProperty]);
+        const body = await response.text();
+        const matchResult = [...body.matchAll(/<version>(.*)<\/version>/g)];
+        return  {
+            runtimeEnvironment: {
+                // This assumes that the second match is the one we want
+                'app.version': matchResult[1][1]
+            },
+            buildInfoProperties: {},
+        }
+    } catch (error) {
+        console.log('Failed to fetch: ' + service[urlProperty])
+        return blankService;
+    }
+}
+
 const decorateService = async(service, prefix) => {
     if (service.source === 'none') {
         service[prefix] = blankService;
     } else if (service.source === 'githubGradle') {
         service[prefix] = await fetchServiceGithubGradle(service, prefix);
+    } else if (service.source === 'githubMaven') {
+        service[prefix] = await fetchServiceGithubMaven(service, prefix);
     } else { // source = buildInfo
         service[prefix] = await fetchServiceBuildInfo(service, prefix);
     }
@@ -86,7 +113,9 @@ const fetchServices = async() => {
         },
         {
             name: 'cas',
-            source: 'none', // buildInfo not available
+            // buildInfo not available
+            source: 'githubMaven',
+            repo: 'ala-cas-5'
         },
         {
             name: 'collections',
@@ -110,7 +139,9 @@ const fetchServices = async() => {
         },
         {
             name: 'namematching',
-            source: 'none', // buildInfo not available
+            // buildInfo not available
+            source: 'githubMaven',
+            repo: 'ala-namematching-service'
         },
         {
             name: 'records',
