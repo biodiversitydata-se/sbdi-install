@@ -46,12 +46,19 @@ const fetchServiceBuildGradle = async(service, prefix) => {
         ala: 'AtlasOfLivingAustralia',
         sbdi: 'biodiversitydata-se'
     }
-    service[urlProperty] = 'https://raw.githubusercontent.com/' + githubOrg[prefix] + '/logger-service/master/build.gradle'
+    service[urlProperty] = 'https://raw.githubusercontent.com/' + githubOrg[prefix] + '/' + service.repo + '/master/build.gradle'
     //console.log(service[urlProperty]);
 
     try {
         const response = await fetch(service[urlProperty]);
-        return blankService;
+        const body = await response.text();
+        const matchResult = body.match(/\nversion(?: | ?= ?)(?:"|')(.*)(?:"|')\n/);
+        return  {
+            runtimeEnvironment: {
+                'app.version': matchResult[1]
+            },
+            buildInfoProperties: {},
+        }
     } catch (error) {
         console.log('Failed to fetch: ' + service[urlProperty])
         return blankService;
@@ -73,7 +80,9 @@ const fetchServices = async() => {
     const services = [
         {
             name: 'apikey',
-            source: 'none', // buildInfo not available
+            // buildInfo not available
+            source: 'buildGradle',
+            repo: 'apikey',
         },
         {
             name: 'cas',
@@ -93,10 +102,11 @@ const fetchServices = async() => {
         },
         {
             name: 'logger',
-            source: 'buildGradle'
             // requires auth
             //alaContext: '/alaAdmin',
             //sbdiContext: '/alaAdmin',
+            source: 'buildGradle',
+            repo: 'logger-service',
         },
         {
             name: 'namematching',
@@ -108,11 +118,13 @@ const fetchServices = async() => {
         },
         {
             name: 'records-service',
-            alaHost: 'biocache',
-            sbdiHost: 'records',
-            alaContext: '/ws',
-            sbdiContext: '/ws',
-            source: 'none', // ?format=json doesn't work
+            // ?format=json doesn't work
+            //alaHost: 'biocache',
+            //sbdiHost: 'records',
+            //alaContext: '/ws',
+            //sbdiContext: '/ws',
+            source: 'buildGradle',
+            repo: 'biocache-service',
         },
         {
             name: 'regions',
@@ -136,19 +148,23 @@ const fetchServices = async() => {
         },
         {
             name: 'species-service',
-            alaHost: 'bie',
-            sbdiHost: 'species',
-            alaContext: '/ws/alaAdmin',
-            sbdiContext: '/ws/alaAdmin',
-            source: 'none', // requires auth
+            // requires auth
+            //alaHost: 'bie',
+            //sbdiHost: 'species',
+            //alaContext: '/ws/alaAdmin',
+            //sbdiContext: '/ws/alaAdmin',
+            source: 'buildGradle',
+            repo: 'bie-index',
         },
         {
             name: 'userdetails',
-            alaHost: 'auth',
-            sbdiHost: 'auth',
-            alaContext: '/userdetails/alaAdmin',
-            sbdiContext: '/userdetails/alaAdmin',
-            source: 'none', // requires auth
+             // requires auth
+            //alaHost: 'auth',
+            //sbdiHost: 'auth',
+            //alaContext: '/userdetails/alaAdmin',
+            //sbdiContext: '/userdetails/alaAdmin',
+            source: 'buildGradle',
+            repo: 'userdetails',
         },
     ];
 
