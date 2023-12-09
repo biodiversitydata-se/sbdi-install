@@ -190,7 +190,7 @@ const format = (value) => {
 
 const displayServices = (services) => {
     console.log(
-        'App'.padStart(26), 
+        'App'.padStart(27),
         'App'.padStart(10),
         'Java'.padStart(12),
         'Java'.padStart(12),
@@ -198,8 +198,8 @@ const displayServices = (services) => {
         'Grails'.padStart(10),
         );
     console.log(
-        'Service'.padEnd(15), 
-        'ALA'.padStart(10), 
+        'Service'.padEnd(16),
+        'ALA'.padStart(10),
         'SBDI'.padStart(10),
         'ALA'.padStart(12),
         'SBDI'.padStart(12),
@@ -211,8 +211,8 @@ const displayServices = (services) => {
 
     services.forEach(service => {
         console.log(
-            ((isBehind(service) ? '*' : '') + service.name).padEnd(15), 
-            format(service.ala.runtimeEnvironment['app.version']).padStart(10), 
+            ((isBehind(service) ? '*' : '') + service.name).padEnd(16),
+            format(service.ala.runtimeEnvironment['app.version']).padStart(10),
             format(service.sbdi.runtimeEnvironment['app.version']).padStart(10),
             format(service.ala.runtimeEnvironment['java.version']).padStart(12),
             format(service.sbdi.runtimeEnvironment['java.version']).padStart(12),
