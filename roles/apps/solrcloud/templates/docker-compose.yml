@@ -10,110 +10,172 @@ services:
     image: zookeeper:3.9
     environment:
       ZOO_MY_ID: 1
-      #ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
-      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
       ZOO_4LW_COMMANDS_WHITELIST: "*"
+    extra_hosts:
+      - "zookeeper-1:0.0.0.0"
     networks:
       - basnet
     volumes:
-      - data_zookeeper1:/data
-      - data_zookeeperlog1:/datalog
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == live-manager-1
+      - data_zookeeper-1:/data
+      - data_zookeeperlog-1:/datalog
 
-  #zookeeper-2:
-  #  image: zookeeper:3.9
-  #  environment:
-  #    ZOO_MY_ID: 2
-  #    ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
-  #    ZOO_4LW_COMMANDS_WHITELIST: "*"
-  #  networks:
-  #    - basnet
-  #  ports:
-  #    - "2182:2181"
-  #  volumes:
-  #    - data_zookeeper2:/data
-  #    - data_zookeeperlog2:/datalog
+  zookeeper-2:
+    image: zookeeper:3.9
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+      ZOO_4LW_COMMANDS_WHITELIST: "*"
+    extra_hosts:
+      - "zookeeper-2:0.0.0.0"
+    networks:
+      - basnet
+    volumes:
+      - data_zookeeper-2:/data
+      - data_zookeeperlog-2:/datalog
 
-  #zookeeper-3:
-  #  image: zookeeper:3.9
-  #  environment:
-  #    ZOO_MY_ID: 3
-  #    ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
-  #    ZOO_4LW_COMMANDS_WHITELIST: "*"
-  #  networks:
-  #    - basnet
-  #  ports:
-  #    - "2183:2181"
-  #  volumes:
-  #    - data_zookeeper3:/data
-  #    - data_zookeeperlog3:/datalog
+  zookeeper-3:
+    image: zookeeper:3.9
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+      ZOO_4LW_COMMANDS_WHITELIST: "*"
+    extra_hosts:
+      - "zookeeper-3:0.0.0.0"
+    networks:
+      - basnet
+    volumes:
+      - data_zookeeper-3:/data
+      - data_zookeeperlog-3:/datalog
 
   solr-1:
     image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
     environment:
-      #ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-      ZK_HOST: zookeeper-1:2181
+      ZK_HOST: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      #SOLR_HEAP: 24g
       SOLR_HEAP: 2g
       SOLR_HOST: solr-1
       SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
     volumes:
-      - data_solr1:/var/solr
+      - data_solr-1:/var/solr
     networks:
       - basnet
     ports:
-      - "8984:8983"
+      - "8973:8983"
     deploy:
       placement:
         constraints:
+          #- node.hostname == live-solrcloud-1
           - node.hostname == live-manager-1
 
   #solr-2:
   #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
   #  environment:
   #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-  #    SOLR_HEAP: 2g
+  #    SOLR_HEAP: 24g
   #    SOLR_HOST: solr-2
   #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
   #  volumes:
-  #    - data_solr2:/var/solr
+  #    - data_solr-2:/var/solr
   #  networks:
   #    - basnet
+  #  deploy:
+  #    placement:
+  #      constraints:
+  #        - node.hostname == live-solrcloud-2
 
   #solr-3:
   #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
   #  environment:
   #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-  #    SOLR_HEAP: 2g
+  #    SOLR_HEAP: 24g
   #    SOLR_HOST: solr-3
   #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
   #  volumes:
-  #    - data_solr3:/var/solr
+  #    - data_solr-3:/var/solr
   #  networks:
   #    - basnet
+  #  deploy:
+  #    placement:
+  #      constraints:
+  #        - node.hostname == live-solrcloud-3
 
   #solr-4:
   #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
   #  environment:
   #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-  #    SOLR_HEAP: 2g
+  #    SOLR_HEAP: 24g
   #    SOLR_HOST: solr-4
   #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
   #  volumes:
-  #    - data_solr4:/var/solr
+  #    - data_solr-4:/var/solr
   #  networks:
   #    - basnet
+  #  deploy:
+  #    placement:
+  #      constraints:
+  #        - node.hostname == live-solrcloud-4
 
 volumes:
-  data_zookeeper1:
-  #data_zookeeper2:
-  #data_zookeeper3:
-  data_zookeeperlog1:
-  #data_zookeeperlog2:
-  #data_zookeeperlog3:
-  data_solr1:
-  #data_solr2:
-  #data_solr3:
-  #data_solr4:
+  data_solr-1:
+
+  data_zookeeper-1:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/zookeeper-1"
+  data_zookeeperlog-1:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/zookeeperlog-1"
+  data_zookeeper-2:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/zookeeper-2"
+  data_zookeeperlog-2:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/zookeeperlog-2"
+  data_zookeeper-3:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/zookeeper-3"
+  data_zookeeperlog-3:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/zookeeperlog-3"
+  #data_solr-1:
+  #  driver: local
+  #  driver_opts:
+  #    type: none
+  #    o: bind
+  #    device: "/data/solr-1"
+  #data_solr-2:
+  #  driver: local
+  #  driver_opts:
+  #    type: none
+  #    o: bind
+  #    device: "/data/solr-2"
+  #data_solr-3:
+  #  driver: local
+  #  driver_opts:
+  #    type: none
+  #    o: bind
+  #    device: "/data/solr-3"
+  #data_solr-4:
+  #  driver: local
+  #  driver_opts:
+  #    type: none
+  #    o: bind
+  #    device: "/data/solr-4"
