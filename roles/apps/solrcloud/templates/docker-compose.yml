@@ -12,6 +12,9 @@ services:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
       ZOO_4LW_COMMANDS_WHITELIST: "*"
+      ZOO_TICK_TIME: 2000
+      ZOO_INIT_LIMIT: 10
+      ZOO_SYNC_LIMIT: 5
     extra_hosts:
       - "zookeeper-1:0.0.0.0"
     networks:
@@ -26,6 +29,9 @@ services:
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
       ZOO_4LW_COMMANDS_WHITELIST: "*"
+      ZOO_TICK_TIME: 2000
+      ZOO_INIT_LIMIT: 10
+      ZOO_SYNC_LIMIT: 5
     extra_hosts:
       - "zookeeper-2:0.0.0.0"
     networks:
@@ -40,6 +46,9 @@ services:
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
       ZOO_4LW_COMMANDS_WHITELIST: "*"
+      ZOO_TICK_TIME: 2000
+      ZOO_INIT_LIMIT: 10
+      ZOO_SYNC_LIMIT: 5
     extra_hosts:
       - "zookeeper-3:0.0.0.0"
     networks:
