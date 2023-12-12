@@ -28,8 +28,7 @@ collectory:
     Authorization: {{ pipelines.collectory_apikey }}
 
 imageService:
-  #wsUrl: https://images.biodiversitydata.se/ws/
-  wsUrl: http://localhost:8082/
+  wsUrl: https://images.biodiversitydata.se/
   httpHeaders:
     apiKey: {{ pipelines.imageservice_apikey }}
 
@@ -38,6 +37,9 @@ speciesListService:
 
 samplingService:
   wsUrl: https://spatial.biodiversitydata.se/ws/
+
+index:
+  includeImages: false
 
 solr:
   #zkHost: localhost:2181,localhost:2182,localhost:2183
