@@ -15,6 +15,11 @@ services:
       ZOO_TICK_TIME: 2000
       ZOO_INIT_LIMIT: 10
       ZOO_SYNC_LIMIT: 5
+    #ports:
+    #  - target: 2181
+    #    published: 2181
+    #    protocol: tcp
+    #    mode: host
     extra_hosts:
       - "zookeeper-1:0.0.0.0"
     networks:
@@ -22,6 +27,10 @@ services:
     volumes:
       - data_zookeeper-1:/data
       - data_zookeeperlog-1:/datalog
+  #  deploy:
+  #    placement:
+  #      constraints:
+  #        - node.hostname == live-solrcloud-1
 
   zookeeper-2:
     image: zookeeper:3.9
@@ -32,6 +41,11 @@ services:
       ZOO_TICK_TIME: 2000
       ZOO_INIT_LIMIT: 10
       ZOO_SYNC_LIMIT: 5
+    #ports:
+    #  - target: 2181
+    #    published: 2181
+    #    protocol: tcp
+    #    mode: host
     extra_hosts:
       - "zookeeper-2:0.0.0.0"
     networks:
@@ -39,6 +53,10 @@ services:
     volumes:
       - data_zookeeper-2:/data
       - data_zookeeperlog-2:/datalog
+  #  deploy:
+  #    placement:
+  #      constraints:
+  #        - node.hostname == live-solrcloud-2
 
   zookeeper-3:
     image: zookeeper:3.9
@@ -49,6 +67,11 @@ services:
       ZOO_TICK_TIME: 2000
       ZOO_INIT_LIMIT: 10
       ZOO_SYNC_LIMIT: 5
+    #ports:
+    #  - target: 2181
+    #    published: 2181
+    #    protocol: tcp
+    #    mode: host
     extra_hosts:
       - "zookeeper-3:0.0.0.0"
     networks:
@@ -56,6 +79,10 @@ services:
     volumes:
       - data_zookeeper-3:/data
       - data_zookeeperlog-3:/datalog
+  #  deploy:
+  #    placement:
+  #      constraints:
+  #        - node.hostname == live-solrcloud-3
 
   solr-1:
     image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
@@ -65,12 +92,15 @@ services:
       SOLR_HEAP: 2g
       SOLR_HOST: solr-1
       SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-    volumes:
-      - data_solr-1:/var/solr
+    ports:
+      - target: 8983
+        published: 8973
+        protocol: tcp
+        mode: host
     networks:
       - basnet
-    ports:
-      - "8973:8983"
+    volumes:
+      - data_solr-1:/var/solr
     deploy:
       placement:
         constraints:
@@ -84,10 +114,15 @@ services:
   #    SOLR_HEAP: 24g
   #    SOLR_HOST: solr-2
   #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-  #  volumes:
-  #    - data_solr-2:/var/solr
+  #  ports:
+  #    - target: 8983
+  #      published: 8973
+  #      protocol: tcp
+  #      mode: host
   #  networks:
   #    - basnet
+  #  volumes:
+  #    - data_solr-2:/var/solr
   #  deploy:
   #    placement:
   #      constraints:
@@ -100,10 +135,15 @@ services:
   #    SOLR_HEAP: 24g
   #    SOLR_HOST: solr-3
   #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-  #  volumes:
-  #    - data_solr-3:/var/solr
+  #  ports:
+  #    - target: 8983
+  #      published: 8973
+  #      protocol: tcp
+  #      mode: host
   #  networks:
   #    - basnet
+  #  volumes:
+  #    - data_solr-3:/var/solr
   #  deploy:
   #    placement:
   #      constraints:
@@ -116,10 +156,15 @@ services:
   #    SOLR_HEAP: 24g
   #    SOLR_HOST: solr-4
   #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-  #  volumes:
-  #    - data_solr-4:/var/solr
+  #  ports:
+  #    - target: 8983
+  #      published: 8973
+  #      protocol: tcp
+  #      mode: host
   #  networks:
   #    - basnet
+  #  volumes:
+  #    - data_solr-4:/var/solr
   #  deploy:
   #    placement:
   #      constraints:
