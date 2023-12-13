@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 networks:
   basnet:
@@ -25,6 +25,6 @@ volumes:
   data_nameindex:
     driver: local
     driver_opts:
-      type: nfs
-      o: nfsvers=4,addr=live-manager-1,rw
-      device: ":/docker_nfs/var/volumes/data_nameindex"
+      type: none
+      o: bind
+      device: "/docker_nfs/var/volumes/data_nameindex"
