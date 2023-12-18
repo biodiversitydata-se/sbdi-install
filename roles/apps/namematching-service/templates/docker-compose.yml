@@ -10,7 +10,7 @@ configs:
 
 services:
   nameindex:
-    image: ghcr.io/biodiversitydata-se/ala-name-matching-index:1.0.0
+    image: ghcr.io/biodiversitydata-se/ala-name-matching-index:1.0.1
     volumes:
       - data_nameindex:/data/lucene/namematching
     deploy:
