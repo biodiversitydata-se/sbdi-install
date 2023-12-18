@@ -7,21 +7,21 @@
         - delete
         - delete_collection
       uri:
-        url: http://localhost:8973/solr/admin/collections?action=DELETE&name=biocache
+        url: http://live-solrcloud-1:8973/solr/admin/collections?action=DELETE&name=biocache
 
     - name: Delete existing configset
       tags:
         - delete
         - delete_configset
       uri:
-        url: http://localhost:8973/solr/admin/configs?action=DELETE&name=biocache&omitHeader=true
+        url: http://live-solrcloud-1:8973/solr/admin/configs?action=DELETE&name=biocache&omitHeader=true
 
     - name: Create configset
       tags:
         - create
         - create_configset
       uri:
-        url: http://localhost:8973/solr/admin/configs?action=UPLOAD&name=biocache
+        url: http://live-solrcloud-1:8973/solr/admin/configs?action=UPLOAD&name=biocache
         method: POST
         headers:
           Content-Type: application/octet-stream
@@ -32,5 +32,4 @@
         - create
         - create_collection
       uri:
-        #url: http://localhost:8973/solr/admin/collections?action=CREATE&name=biocache&numShards=4&replicationFactor=1&maxShardsPerNode=1&collection.configName=biocache
-        url: http://localhost:8973/solr/admin/collections?action=CREATE&name=biocache&numShards=1&replicationFactor=1&maxShardsPerNode=1&collection.configName=biocache
+        url: http://live-solrcloud-1:8973/solr/admin/collections?action=CREATE&name=biocache&numShards=3&replicationFactor=1&maxShardsPerNode=1&collection.configName=biocache

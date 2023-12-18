@@ -15,11 +15,11 @@ services:
       ZOO_TICK_TIME: 2000
       ZOO_INIT_LIMIT: 10
       ZOO_SYNC_LIMIT: 5
-    #ports:
-    #  - target: 2181
-    #    published: 2181
-    #    protocol: tcp
-    #    mode: host
+    ports:
+      - target: 2181
+        published: 2181
+        protocol: tcp
+        mode: host
     extra_hosts:
       - "zookeeper-1:0.0.0.0"
     networks:
@@ -27,10 +27,10 @@ services:
     volumes:
       - data_zookeeper-1:/data
       - data_zookeeperlog-1:/datalog
-  #  deploy:
-  #    placement:
-  #      constraints:
-  #        - node.hostname == live-solrcloud-1
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == live-solrcloud-1
 
   zookeeper-2:
     image: zookeeper:3.9
@@ -41,11 +41,11 @@ services:
       ZOO_TICK_TIME: 2000
       ZOO_INIT_LIMIT: 10
       ZOO_SYNC_LIMIT: 5
-    #ports:
-    #  - target: 2181
-    #    published: 2181
-    #    protocol: tcp
-    #    mode: host
+    ports:
+      - target: 2181
+        published: 2181
+        protocol: tcp
+        mode: host
     extra_hosts:
       - "zookeeper-2:0.0.0.0"
     networks:
@@ -53,10 +53,10 @@ services:
     volumes:
       - data_zookeeper-2:/data
       - data_zookeeperlog-2:/datalog
-  #  deploy:
-  #    placement:
-  #      constraints:
-  #        - node.hostname == live-solrcloud-2
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == live-solrcloud-2
 
   zookeeper-3:
     image: zookeeper:3.9
@@ -67,11 +67,11 @@ services:
       ZOO_TICK_TIME: 2000
       ZOO_INIT_LIMIT: 10
       ZOO_SYNC_LIMIT: 5
-    #ports:
-    #  - target: 2181
-    #    published: 2181
-    #    protocol: tcp
-    #    mode: host
+    ports:
+      - target: 2181
+        published: 2181
+        protocol: tcp
+        mode: host
     extra_hosts:
       - "zookeeper-3:0.0.0.0"
     networks:
@@ -79,17 +79,16 @@ services:
     volumes:
       - data_zookeeper-3:/data
       - data_zookeeperlog-3:/datalog
-  #  deploy:
-  #    placement:
-  #      constraints:
-  #        - node.hostname == live-solrcloud-3
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == live-solrcloud-3
 
   solr-1:
     image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
     environment:
       ZK_HOST: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
-      #SOLR_HEAP: 24g
-      SOLR_HEAP: 2g
+      SOLR_HEAP: 24g
       SOLR_HOST: solr-1
       SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
     ports:
@@ -104,50 +103,49 @@ services:
     deploy:
       placement:
         constraints:
-          #- node.hostname == live-solrcloud-1
-          - node.hostname == live-manager-1
+          - node.hostname == live-solrcloud-1
 
-  #solr-2:
-  #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
-  #  environment:
-  #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-  #    SOLR_HEAP: 24g
-  #    SOLR_HOST: solr-2
-  #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-  #  ports:
-  #    - target: 8983
-  #      published: 8973
-  #      protocol: tcp
-  #      mode: host
-  #  networks:
-  #    - basnet
-  #  volumes:
-  #    - data_solr-2:/var/solr
-  #  deploy:
-  #    placement:
-  #      constraints:
-  #        - node.hostname == live-solrcloud-2
+  solr-2:
+    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
+    environment:
+      ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
+      SOLR_HEAP: 24g
+      SOLR_HOST: solr-2
+      SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
+    ports:
+      - target: 8983
+        published: 8973
+        protocol: tcp
+        mode: host
+    networks:
+      - basnet
+    volumes:
+      - data_solr-2:/var/solr
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == live-solrcloud-2
 
-  #solr-3:
-  #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
-  #  environment:
-  #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-  #    SOLR_HEAP: 24g
-  #    SOLR_HOST: solr-3
-  #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-  #  ports:
-  #    - target: 8983
-  #      published: 8973
-  #      protocol: tcp
-  #      mode: host
-  #  networks:
-  #    - basnet
-  #  volumes:
-  #    - data_solr-3:/var/solr
-  #  deploy:
-  #    placement:
-  #      constraints:
-  #        - node.hostname == live-solrcloud-3
+  solr-3:
+    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
+    environment:
+      ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
+      SOLR_HEAP: 24g
+      SOLR_HOST: solr-3
+      SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
+    ports:
+      - target: 8983
+        published: 8973
+        protocol: tcp
+        mode: host
+    networks:
+      - basnet
+    volumes:
+      - data_solr-3:/var/solr
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == live-solrcloud-3
 
   #solr-4:
   #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
@@ -171,62 +169,60 @@ services:
   #        - node.hostname == live-solrcloud-4
 
 volumes:
-  data_solr-1:
-
   data_zookeeper-1:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/docker_nfs/var/volumes/zookeeper-1"
+      device: "/data/zookeeper-1"
   data_zookeeperlog-1:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/docker_nfs/var/volumes/zookeeperlog-1"
+      device: "/data/zookeeperlog-1"
   data_zookeeper-2:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/docker_nfs/var/volumes/zookeeper-2"
+      device: "/data/zookeeper-2"
   data_zookeeperlog-2:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/docker_nfs/var/volumes/zookeeperlog-2"
+      device: "/data/zookeeperlog-2"
   data_zookeeper-3:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/docker_nfs/var/volumes/zookeeper-3"
+      device: "/data/zookeeper-3"
   data_zookeeperlog-3:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/docker_nfs/var/volumes/zookeeperlog-3"
-  #data_solr-1:
-  #  driver: local
-  #  driver_opts:
-  #    type: none
-  #    o: bind
-  #    device: "/data/solr-1"
-  #data_solr-2:
-  #  driver: local
-  #  driver_opts:
-  #    type: none
-  #    o: bind
-  #    device: "/data/solr-2"
-  #data_solr-3:
-  #  driver: local
-  #  driver_opts:
-  #    type: none
-  #    o: bind
-  #    device: "/data/solr-3"
+      device: "/data/zookeeperlog-3"
+  data_solr-1:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/data/solr-1"
+  data_solr-2:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/data/solr-2"
+  data_solr-3:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/data/solr-3"
   #data_solr-4:
   #  driver: local
   #  driver_opts:
