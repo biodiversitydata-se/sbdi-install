@@ -4,6 +4,24 @@ live-manager-1
 [ext_server]
 live-ext-1 ansible_user=ubuntu
 
+[pipelines]
+live-pipelines-1 ansible_ssh_pipelining=true
+live-pipelines-2 ansible_ssh_pipelining=true
+live-pipelines-3 ansible_ssh_pipelining=true
+
+[hadoop]
+live-pipelines-1 ansible_ssh_pipelining=true
+live-pipelines-2 ansible_ssh_pipelining=true
+live-pipelines-3 ansible_ssh_pipelining=true
+
+[spark]
+live-pipelines-1 ansible_ssh_pipelining=true
+live-pipelines-2 ansible_ssh_pipelining=true
+live-pipelines-3 ansible_ssh_pipelining=true
+
+[cluster_master]
+live-pipelines-1 ansible_ssh_pipelining=true
+
 [monitoring_observer]
 live-ext-1 ansible_user=ubuntu
 

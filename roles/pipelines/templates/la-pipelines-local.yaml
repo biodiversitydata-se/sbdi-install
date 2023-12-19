@@ -5,12 +5,12 @@ general:
 run:
   platform: spark-cluster
   spark-cluster:
-    sparkMaster: spark://master:7077
+    sparkMaster: spark://live-pipelines-1:7077
 
 fs:
   platform: hdfs
   hdfs:
-    fsPath: hdfs://master:9000
+    fsPath: hdfs://live-pipelines-1:9000
 
 dwca-avro:
   inputPath: /data/dwca-export/{datasetId}/{datasetId}.zip
@@ -20,7 +20,7 @@ alaNameMatch:
   wsUrl: https://namematching.biodiversitydata.se/
 
 sds:
-  wsUrl: http://ala-sensitive-data-service:9189
+  wsUrl: http://localhost:9189
 
 collectory:
   wsUrl: https://collections.biodiversitydata.se/ws/
@@ -42,8 +42,7 @@ index:
   includeImages: false
 
 solr:
-  #zkHost: localhost:2181,localhost:2182,localhost:2183
-  zkHost: solr:9983
+  zkHost: live-solrcloud-1:2181,live-solrcloud-2:2181,live-solrcloud-3:2181
   includeSampling: true
   numOfPartitions: 2
 
@@ -65,27 +64,3 @@ locationInfoConfig:
 gbifConfig:
   vocabularyConfig:
     vocabulariesPath: '{fsPath}/pipelines-vocabularies/'
-
-interpret-sh-args:
-  spark-cluster:
-    executor-memory: 8G #24G
-
-uuid-sh-args:
-  spark-cluster:
-    executor-memory: 8G #20G
-
-sampling-sh-args:
-  spark-cluster:
-    executor-memory: 8G #16G
-
-sensitive-sh-args:
-  spark-cluster:
-    executor-memory: 8G #16G
-
-index-sh-args:
-  spark-cluster:
-    executor-memory: 8G #20G
-
-solr-sh-args:
-  spark-cluster:
-    executor-memory: 8G #22G

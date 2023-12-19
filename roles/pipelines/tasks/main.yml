@@ -50,22 +50,6 @@
     - pipelines
     - pipelines-config
 
-- name: Update docker directory
-  template: src={{ item }} dest=/etc/docker/daemon.json
-  with_items:
-    - daemon.json
-  tags:
-    - pipelines
-    - docker
-
-- name: Restart docker
-  service:
-    name: docker
-    state: restarted
-  tags:
-    - pipelines
-    - docker
-
 # yq is needed by the la-pipelines script
 
 - name: Download yq
@@ -137,21 +121,21 @@
     - pipelines
     - pipelines-services
 
-#- name: Enable services
-#  service: name={{ item }} enabled=yes
-#  with_items:
-#    - ala-sensitive-data-service
-#  tags:
-#    - pipelines
-#    - pipelines-services
+- name: Enable services
+  service: name={{ item }} enabled=yes
+  with_items:
+    - ala-sensitive-data-service
+  tags:
+    - pipelines
+    - pipelines-services
 
-#- name: Start service ala-sensitive-data-service, if not running
-#  service:
-#    name: ala-sensitive-data-service
-#    state: started
-#  tags:
-#    - pipelines
-#    - pipelines-services
+- name: Start service ala-sensitive-data-service, if not running
+  service:
+    name: ala-sensitive-data-service
+    state: started
+  tags:
+    - pipelines
+    - pipelines-services
 
 - name: Create HDFS base directories
   shell: "{{ hadoop_install_dir }}/bin/hdfs dfs -mkdir -p {{ item }}"

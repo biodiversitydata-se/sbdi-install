@@ -2,22 +2,23 @@
 hadoop:
   version: 2.10.2
   hadoop_archive: hadoop-2.10.2.tar.gz
-  data_dir: /var/hadoop/data
-  name_dir: /var/hadoop/name
+  data_dir: /data/hadoop/var/data
+  name_dir: /data/hadoop/var/name
   temp_dir: /tmp/hadoop/hdfs/tmp
   download_location: https://dlcdn.apache.org/hadoop/common
   #download_location: https://archive.apache.org/dist/hadoop/common/
   user: hadoop
   user_shell: /bin/bash
   default_hosts:
-    - master
-    - worker
-  secondary_name_node: master
+    - live-pipelines-1
+    - live-pipelines-2
+    - live-pipelines-3
+  secondary_name_node: live-pipelines-1
   slaves:
-    - master
-    - worker
+    - live-pipelines-2
+    - live-pipelines-3
 hadoop_install_dir: "/data/hadoop"
-hadoop_master_ip: master
+hadoop_master_ip: live-pipelines-1
 master_nodes: "{% if 'cluster_master' in groups %} {{ groups['cluster_master']|length }} {% else  %} 0 {% endif %}"
 data_nodes: "{% if 'cluster_nodes' in groups %} {{ groups['cluster_nodes']|length }} {% else  %} 0 {% endif %}"
 number_of_nodes: "{{ master_nodes + data_nodes }}"
