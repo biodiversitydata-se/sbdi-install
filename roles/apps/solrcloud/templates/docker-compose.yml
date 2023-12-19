@@ -84,15 +84,16 @@ services:
         constraints:
           - node.hostname == live-solrcloud-3
 
-  solr-1:
+  live-solrcloud-1:
     image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
     environment:
       ZK_HOST: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
       SOLR_HEAP: 24g
-      SOLR_HOST: solr-1
+      SOLR_HOST: live-solrcloud-1
+      SOLR_PORT: 8973
       SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
     ports:
-      - target: 8983
+      - target: 8973
         published: 8973
         protocol: tcp
         mode: host
@@ -105,15 +106,16 @@ services:
         constraints:
           - node.hostname == live-solrcloud-1
 
-  solr-2:
+  live-solrcloud-2:
     image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
     environment:
       ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
       SOLR_HEAP: 24g
-      SOLR_HOST: solr-2
+      SOLR_HOST: live-solrcloud-2
+      SOLR_PORT: 8973
       SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
     ports:
-      - target: 8983
+      - target: 8973
         published: 8973
         protocol: tcp
         mode: host
@@ -126,15 +128,16 @@ services:
         constraints:
           - node.hostname == live-solrcloud-2
 
-  solr-3:
+  live-solrcloud-3:
     image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
     environment:
       ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
       SOLR_HEAP: 24g
-      SOLR_HOST: solr-3
+      SOLR_HOST: live-solrcloud-3
+      SOLR_PORT: 8973
       SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
     ports:
-      - target: 8983
+      - target: 8973
         published: 8973
         protocol: tcp
         mode: host
@@ -146,27 +149,6 @@ services:
       placement:
         constraints:
           - node.hostname == live-solrcloud-3
-
-  #solr-4:
-  #  image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.1
-  #  environment:
-  #    ZK_HOST: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-  #    SOLR_HEAP: 24g
-  #    SOLR_HOST: solr-4
-  #    SOLR_OPTS: -Dlog4j2.formatMsgNoLookups=true
-  #  ports:
-  #    - target: 8983
-  #      published: 8973
-  #      protocol: tcp
-  #      mode: host
-  #  networks:
-  #    - basnet
-  #  volumes:
-  #    - data_solr-4:/var/solr
-  #  deploy:
-  #    placement:
-  #      constraints:
-  #        - node.hostname == live-solrcloud-4
 
 volumes:
   data_zookeeper-1:
@@ -223,9 +205,3 @@ volumes:
       type: none
       o: bind
       device: "/data/solr-3"
-  #data_solr-4:
-  #  driver: local
-  #  driver_opts:
-  #    type: none
-  #    o: bind
-  #    device: "/data/solr-4"
