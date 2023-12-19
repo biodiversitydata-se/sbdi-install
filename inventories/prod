@@ -35,6 +35,12 @@ live-cassandra-1
 live-cassandra-2
 live-cassandra-3
 live-cassandra-4
+live-solrcloud-1
+live-solrcloud-2
+live-solrcloud-3
+live-pipelines-1
+live-pipelines-2
+live-pipelines-3
 live-ext-1 ansible_user=ubuntu
 live-molecular-1 ansible_user=ubuntu
 live-pybossa ansible_user=ubuntu
