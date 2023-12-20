@@ -17,7 +17,7 @@ dwca-avro:
   tempLocation: /data/dwca-export/{datasetId}/tmp/
 
 alaNameMatch:
-  wsUrl: https://namematching.biodiversitydata.se/
+  wsUrl: http://localhost:9179
 
 sds:
   wsUrl: http://localhost:9189

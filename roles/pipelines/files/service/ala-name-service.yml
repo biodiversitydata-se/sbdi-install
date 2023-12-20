@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+
+  ala-namematching-service:
+    container_name: "ala-name-service"
+    image: ghcr.io/biodiversitydata-se/ala-namematching-service:latest
+    environment:
+      JAVA_OPTS: -Xmx4g -Xms128m -Xss256k -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true
+    volumes:
+      - data_nameindex:/data/lucene/namematching
+      - /data/namematching-service-config.yml:/data/ala-namematching-service/config/namematching-service-config.yml
+    ports:
+      - "9180:9180"
+      - "9179:9179"
+
+volumes:
+  data_nameindex:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/data/data_nameindex"

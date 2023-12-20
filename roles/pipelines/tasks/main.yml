@@ -100,6 +100,8 @@
 - name: Copy docker YAML files to {{ data_dir }}
   copy: src=service/{{ item }} dest={{ data_dir }}/{{ item }}
   with_items:
+    - ala-name-service.yml
+    - namematching-service-config.yml
     - ala-sensitive-data-service.yml
   tags:
     - pipelines
@@ -108,6 +110,7 @@
 - name: Copy service scripts to /usr/bin
   copy: src=service/{{ item }} dest=/usr/bin/{{ item }} mode=777
   with_items:
+    - ala-name-service.sh
     - ala-sensitive-data-service.sh
   tags:
     - pipelines
@@ -116,7 +119,14 @@
 - name: Copy docker service files to /etc/systemd/system
   copy: src=service/{{ item }} dest=/etc/systemd/system/{{ item }}
   with_items:
+    - ala-name-service.service
     - ala-sensitive-data-service.service
+  tags:
+    - pipelines
+    - pipelines-services
+
+- name: Copy nameindex to local disk
+  command: rsync -rt /docker_nfs/var/volumes/data_nameindex {{ data_dir }}/
   tags:
     - pipelines
     - pipelines-services
@@ -124,6 +134,7 @@
 - name: Enable services
   service: name={{ item }} enabled=yes
   with_items:
+    - ala-name-service
     - ala-sensitive-data-service
   tags:
     - pipelines
@@ -132,6 +143,14 @@
 - name: Start service ala-sensitive-data-service, if not running
   service:
     name: ala-sensitive-data-service
+    state: started
+  tags:
+    - pipelines
+    - pipelines-services
+
+- name: Start service ala-name-service, if not running
+  service:
+    name: ala-name-service
     state: started
   tags:
     - pipelines
