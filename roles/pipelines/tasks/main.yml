@@ -98,7 +98,7 @@
     - pipelines-config
 
 - name: Copy docker YAML files to {{ data_dir }}
-  copy: src={{ item }} dest={{ data_dir }}/{{ item }}
+  copy: src=service/{{ item }} dest={{ data_dir }}/{{ item }}
   with_items:
     - ala-sensitive-data-service.yml
   tags:
@@ -106,7 +106,7 @@
     - pipelines-services
   
 - name: Copy service scripts to /usr/bin
-  copy: src={{ item }} dest=/usr/bin/{{ item }} mode=777
+  copy: src=service/{{ item }} dest=/usr/bin/{{ item }} mode=777
   with_items:
     - ala-sensitive-data-service.sh
   tags:
@@ -114,7 +114,7 @@
     - pipelines-services
 
 - name: Copy docker service files to /etc/systemd/system
-  copy: src={{ item }} dest=/etc/systemd/system/{{ item }}
+  copy: src=service/{{ item }} dest=/etc/systemd/system/{{ item }}
   with_items:
     - ala-sensitive-data-service.service
   tags:
@@ -204,7 +204,7 @@
 
 - name: Copy states file
   copy: 
-    src: "{{ item }}" 
+    src: "data/{{ item }}" 
     dest: "{{ data_dir }}/la-pipelines/config/{{ item }}"
     mode: 0644
     owner: "{{ spark_user }}"
@@ -217,7 +217,7 @@
 
 - name: Copy and unpack SHP files (includes global layer and EEZ derived from GBIFs geocode DB)
   unarchive:
-    src: "{{ item }}"
+    src: "data/{{ item }}"
     dest: "{{ data_dir }}/pipelines-shp"
     owner: "{{ spark_user }}"
     group: "{{ spark_user }}"
@@ -238,8 +238,8 @@
 - name: Copy additional logging configs
   copy: src={{ item.src }} dest={{ item.dest }} owner={{ item.owner }} group={{ item.group }}
   with_items:
-    - { src: "{{ logback_pipelines_conf | default('logback.xml') }}", dest: "{{ data_dir }}/la-pipelines/config/logback.xml", owner: "{{ spark_user }}", group: "{{ spark_user }}" }
-    - { src: "{{ log4j_spark_conf | default('log4j-spark.properties') }}", dest: "{{ data_dir }}/spark/conf/log4j.properties", owner: "{{ spark_user }}", group: "{{ spark_user }}" }
+    - { src: "{{ logback_pipelines_conf | default('config/logback.xml') }}", dest: "{{ data_dir }}/la-pipelines/config/logback.xml", owner: "{{ spark_user }}", group: "{{ spark_user }}" }
+    - { src: "{{ log4j_spark_conf | default('config/log4j-spark.properties') }}", dest: "{{ data_dir }}/spark/conf/log4j.properties", owner: "{{ spark_user }}", group: "{{ spark_user }}" }
   tags:
     - pipelines
     - pipelines-config
