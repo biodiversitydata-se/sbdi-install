@@ -2,7 +2,7 @@
 spark:
   version: 2.4.8
   hadoop_version: 2.10.2
-  working_dir: /tmp/spark/data
+  working_dir: /data/spark-local-dir
   master_host: live-pipelines-1
   master_port: 7077
   master_ip: live-pipelines-1
