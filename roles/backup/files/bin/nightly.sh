@@ -5,7 +5,7 @@
 /backup/bin/backup-swarm-pgsql.sh image-service image-service_pgsql-image-service images images
 /backup/bin/backup-swarm-mysql.sh logger logger_mysqldb-logger logger
 /backup/bin/backup-swarm-pgsql.sh spatial-service spatial-service_postgis-spatial-service layersdb layers
-/backup/bin/backup-swarm-mysql.sh specieslists specieslist_mysqldb-specieslist-webapp specieslists
+/backup/bin/backup-swarm-mysql.sh specieslists specieslist-webapp_mysqldb-specieslist-webapp specieslists
 /backup/bin/backup-swarm-mysql.sh wordpress_main wordpress_mysqldb-wordpress-main wordpress
 /backup/bin/backup-swarm-mysql.sh wordpress_docs wordpress_mysqldb-wordpress-docs wordpress
 /backup/bin/backup-swarm-mysql.sh wordpress_tools wordpress_mysqldb-wordpress-tools wordpress
