@@ -187,3 +187,10 @@ userdetails:
 imageFilter: '&fq=spatiallyValid:true&fq=-user_assertions:50001&fq=-user_assertions:50005&fq=-duplicate_status:ASSOCIATED&fq=-duplicateType:DIFFERENT_DATASET'
 userdetails.web.url: https://auth.biodiversitydata.se/userdetails/
 userdetails.api.url: https://auth.biodiversitydata.se/userdetails/
+
+vernacularName:
+  pull:
+    active: true
+    categories: common
+    label: Common names
+    showLanguage: true
